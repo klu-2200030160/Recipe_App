@@ -1,0 +1,27 @@
+<resources>
+    <string name="foodie">Foodie!</string>
+    <string name="chef">CHEF!</string>
+    <string name="hello">Hello</string>
+    <string name="which_indian_food_would_you_like_to_cook">which indian food would you like to cook?</string>
+    <string name="app_name">Recipe App</string>
+    <string-array name="roles_array">
+        <item>customer</item>
+        <item>chef</item>
+        <item>admin</item>
+    </string-array>
+    <string-array name="filter_options">
+        <item>All</item>
+        <item>Cuisine</item>
+        <item>Prep Time</item>
+    </string-array>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here -->
+    </style>
+
+    <!-- RatingBar style -->
+    <style name="RatingBarStyle" parent="Widget.AppCompat.RatingBar">
+        <item name="android:progressTint">@color/yellow</item>
+        <item name="android:secondaryProgressTint">@color/gray</item>
+    </style>
+</resources>

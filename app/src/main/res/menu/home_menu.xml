@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_add_recipe"
+        android:title="Add Recipe" />
+    <item
+        android:id="@+id/action_favorites"
+        android:title="Favorites" />
+    <item
+        android:id="@+id/action_shopping_list"
+        android:title="Shopping List" />
+    <item
+        android:id="@+id/action_profile"
+        android:title="Profile" />
+    <item
+        android:id="@+id/action_sign_out"
+        android:title="Sign Out" />
+</menu>

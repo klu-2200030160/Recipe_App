@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "rules": "rules_version = '2';",
+    "indexes": "    }"
+  }
+}
