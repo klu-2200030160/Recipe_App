@@ -98,7 +98,7 @@ class FirebaseService {
                 val url = imageRef.downloadUrl.await().toString()
                 finalRecipe = finalRecipe.copy(imageUrl = url)
             }
-            db.collection("reviews").document(recipeId).set(finalRecipe).await()
+            db.collection("recipes").document(recipeId).set(finalRecipe).await()
             Result.success(recipeId)
         } catch (e: Exception) {
             Result.failure(e)

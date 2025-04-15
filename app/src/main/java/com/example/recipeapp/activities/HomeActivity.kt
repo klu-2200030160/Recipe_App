@@ -2,23 +2,24 @@ package com.example.recipeapp.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipeapp.R
 import com.example.recipeapp.adapters.RecipeAdapter
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.services.FirebaseService
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 
 class HomeActivity : AppCompatActivity() {
     private val firebaseService = FirebaseService()
@@ -28,19 +29,82 @@ class HomeActivity : AppCompatActivity() {
     private var userRole: String? = null
     private var currentUserId: String? = null
 
+    // Drawer
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
+    private lateinit var menuIcon: ImageView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
 
-        // Apply window insets
+        // Window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // Setup RecyclerView for popular recipes
+        // Drawer setup
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigationView = findViewById(R.id.navigationView)
+        menuIcon = findViewById(R.id.imageView)
+
+        // Set up menu icon to toggle drawer
+        menuIcon.setOnClickListener {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        }
+
+        // Set up NavigationView menu
+        setupNavigationMenu()
+
+        // Handle navigation item clicks
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_home -> {
+                    // Already in HomeActivity, do nothing or refresh if needed
+                    true
+                }
+                R.id.nav_search -> {
+                    startActivity(Intent(this, SearchActivity::class.java))
+                    true
+                }
+                R.id.nav_favorites -> {
+                    startActivity(Intent(this, FavoritesActivity::class.java))
+                    true
+                }
+                R.id.nav_shopping_list -> {
+                    startActivity(Intent(this, ShoppingListActivity::class.java))
+                    true
+                }
+                R.id.nav_profile -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                    true
+                }
+                R.id.nav_logout -> {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        try {
+                            firebaseService.signOut()
+                            startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
+                            finish()
+                        } catch (e: Exception) {
+                            showToast("Logout failed: ${e.message}")
+                        }
+                    }
+                    true
+                }
+                else -> false
+            }.also {
+                drawerLayout.closeDrawer(GravityCompat.START)
+            }
+        }
+
+        // RecyclerView for popular recipes
         popularRecyclerView = findViewById(R.id.rv_popular)
         popularRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         popularAdapter = RecipeAdapter(recipesList) { recipe ->
@@ -50,21 +114,30 @@ class HomeActivity : AppCompatActivity() {
         }
         popularRecyclerView.adapter = popularAdapter
 
-        // Load user data and recipes
+        // Load data
         CoroutineScope(Dispatchers.Main).launch {
             loadUserData()
             loadPopularRecipes()
         }
     }
 
+    private fun setupNavigationMenu() {
+        // Apply role-based visibility to menu items
+        val menu = navigationView.menu
+        menu.findItem(R.id.nav_search)?.isVisible = userRole == "customer" || userRole == "chef"
+        menu.findItem(R.id.nav_favorites)?.isVisible = userRole == "customer" || userRole == "chef"
+        menu.findItem(R.id.nav_shopping_list)?.isVisible = userRole == "customer"
+        // nav_home, nav_profile, nav_logout are visible to all
+    }
+
     private suspend fun loadUserData() {
         firebaseService.getCurrentUser()?.let { user ->
             userRole = user.role
             currentUserId = user.id
-            title = "Home - ${userRole?.capitalize()}"
-            invalidateOptionsMenu() // Update menu based on role
+            title = "Home - ${userRole?.replaceFirstChar { it.uppercaseChar() }}"
+            setupNavigationMenu() // Update menu visibility after role is loaded
         } ?: run {
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show()
+            showToast("User not authenticated")
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
@@ -77,48 +150,22 @@ class HomeActivity : AppCompatActivity() {
             recipesList.addAll(popularRecipes)
             popularAdapter.notifyDataSetChanged()
             if (recipesList.isEmpty()) {
-                Toast.makeText(this, "No popular recipes found", Toast.LENGTH_SHORT).show()
+                showToast("No popular recipes found")
             }
         } catch (e: Exception) {
-            Toast.makeText(this, "Failed to load recipes: ${e.message}", Toast.LENGTH_SHORT).show()
+            showToast("Failed to load recipes: ${e.message}")
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.home_menu, menu)
-        menu?.findItem(R.id.action_add_recipe)?.isVisible = userRole == "chef"
-        menu?.findItem(R.id.action_favorites)?.isVisible = userRole == "customer" || userRole == "chef"
-        menu?.findItem(R.id.action_shopping_list)?.isVisible = userRole == "customer"
-        return true
+    private fun showToast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_add_recipe -> {
-                startActivity(Intent(this, AddEditRecipeActivity::class.java))
-                true
-            }
-            R.id.action_favorites -> {
-                startActivity(Intent(this, FavoritesActivity::class.java))
-                true
-            }
-            R.id.action_shopping_list -> {
-                startActivity(Intent(this, ShoppingListActivity::class.java))
-                true
-            }
-            R.id.action_profile -> {
-                startActivity(Intent(this, ProfileActivity::class.java))
-                true
-            }
-            R.id.action_sign_out -> {
-                CoroutineScope(Dispatchers.Main).launch {
-                    firebaseService.signOut()
-                    startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
-                    finish()
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+    override fun onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START)
+        } else {
+            super.onBackPressed()
         }
     }
 }

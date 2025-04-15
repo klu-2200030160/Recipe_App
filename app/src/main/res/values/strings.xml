@@ -1,9 +1,29 @@
 <resources>
-    <string name="foodie">Foodie!</string>
-    <string name="chef">CHEF!</string>
     <string name="hello">Hello</string>
-    <string name="which_indian_food_would_you_like_to_cook">which indian food would you like to cook?</string>
+    <string name="foodie">Foodie</string>
+    <string name="which_indian_food_would_you_like_to_cook">Which Indian food would you like to cook?</string>
+    <string name="search_recipe">Search recipe</string>
+    <string name="categories">Categories</string>
+    <string name="popular_recipes">Popular Recipes</string>
+    <string name="salad">Salad</string>
+    <string name="Chef">Chef</string>
+    <string name="main">Main</string>
+    <string name="beverage">Beverage</string>
+    <string name="desserts">Desserts</string>
+    <string name="snacks">Snacks</string>
+    <string name="menu_icon_description">Menu icon</string>
+    <string name="background_image_description">Decorative background image</string>
+    <string name="search_icon_description">Search icon</string>
+    <string name="salad_category_description">Salad category</string>
+    <string name="main_dish_category_description">Main dish category</string>
+    <string name="drinks_category_description">Drinks category</string>
+    <string name="desserts_category_description">Desserts category</string>
+    <string name="snacks_category_description">Snacks category</string>
     <string name="app_name">Recipe App</string>
+    <string name="open">Open Drawer</string>
+    <string name="close">Close Drawer</string>
+
+
     <string-array name="roles_array">
         <item>customer</item>
         <item>chef</item>
@@ -24,4 +44,6 @@
         <item name="android:progressTint">@color/yellow</item>
         <item name="android:secondaryProgressTint">@color/gray</item>
     </style>
+
+
 </resources>

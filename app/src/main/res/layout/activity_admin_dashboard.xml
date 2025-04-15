@@ -54,7 +54,7 @@
             android:layout_height="47dp"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/poppins"
-            android:text="@string/chef"
+            android:text="@string/Chef"
             android:textColor="@color/green"
             android:textSize="28sp"
             app:layout_constraintStart_toEndOf="@+id/textView"

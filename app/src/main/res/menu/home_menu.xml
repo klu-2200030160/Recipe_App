@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/action_add_recipe"
-        android:title="Add Recipe" />
+        android:id="@+id/nav_search"
+        android:title="Search"
+        android:icon="@drawable/ic_search" />
     <item
-        android:id="@+id/action_favorites"
-        android:title="Favorites" />
+        android:id="@+id/nav_home"
+        android:title="Home"
+        android:icon="@drawable/ic_home" />
     <item
-        android:id="@+id/action_shopping_list"
-        android:title="Shopping List" />
+        android:id="@+id/nav_favorites"
+        android:title="Favorites"
+        android:icon="@drawable/ic_favourites" />
     <item
-        android:id="@+id/action_profile"
-        android:title="Profile" />
+        android:id="@+id/nav_shopping_list"
+        android:title="Shopping List"
+        android:icon="@drawable/ic_shopping_list" />
     <item
-        android:id="@+id/action_sign_out"
-        android:title="Sign Out" />
+        android:id="@+id/nav_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_profile" />
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout"
+        android:icon="@drawable/ic_sign_out" />
 </menu>
