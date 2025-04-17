@@ -24,13 +24,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RecipeDetailActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_recipe_detail)
+        firebaseService = FirebaseService(this)
 
         // Initialize UI elements
         progressBar = findViewById(R.id.progressBar)

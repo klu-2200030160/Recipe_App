@@ -17,7 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ShoppingListActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ShoppingListAdapter
@@ -26,6 +26,7 @@ class ShoppingListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_shopping_list)
+        firebaseService = FirebaseService(this)
 
         // Initialize UI elements
         progressBar = findViewById(R.id.progressBar)

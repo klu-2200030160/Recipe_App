@@ -1,6 +1,7 @@
 <resources>
     <string name="hello">Hello</string>
     <string name="foodie">Foodie</string>
+    <string name="admin">Admin</string>
     <string name="which_indian_food_would_you_like_to_cook">Which Indian food would you like to cook?</string>
     <string name="search_recipe">Search recipe</string>
     <string name="categories">Categories</string>
@@ -22,6 +23,9 @@
     <string name="app_name">Recipe App</string>
     <string name="open">Open Drawer</string>
     <string name="close">Close Drawer</string>
+    <string name="recipe_image_preview">Recipe image preview</string>
+    <string name="recipe_image_description">Recipe image</string>
+
 
 
     <string-array name="roles_array">

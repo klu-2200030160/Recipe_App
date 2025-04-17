@@ -15,12 +15,13 @@ import com.example.recipeapp.utils.ToastUtils
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        firebaseService = FirebaseService(this)
 
         // Initialize UI elements
         progressBar = findViewById(R.id.progressBar)

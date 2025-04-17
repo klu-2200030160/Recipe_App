@@ -1,0 +1,30 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
+    <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search" />
+    <item
+        android:id="@+id/nav_add_recipe"
+        android:icon="@drawable/ic_add_recipes"
+        android:title="Add Recipe" />
+    <item
+        android:id="@+id/nav_UserManagement"
+        android:icon="@drawable/usermanagement"
+        android:title="User Management" />
+    <item
+        android:id="@+id/nav_recipe_management"
+        android:icon="@drawable/usermanagement"
+        android:title="Recipe Management" />
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Profile" />
+    <item
+        android:id="@+id/nav_logout"
+        android:icon="@drawable/ic_sign_out"
+        android:title="Logout" />
+</menu>

@@ -13,13 +13,14 @@ import com.example.recipeapp.utils.ValidationUtils
 import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
     private lateinit var roleSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
+        firebaseService = FirebaseService(this)
 
         // Initialize UI elements
         progressBar = findViewById(R.id.progressBar)

@@ -11,32 +11,44 @@ import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
 
 class RecipeAdapter(
-    private var recipes: List<Recipe>,
+    private var recipes: MutableList<Recipe> = mutableListOf(),
     private val onClick: (Recipe) -> Unit
-) : RecyclerView.Adapter<RecipeAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.popular_txt) // Adjust ID based on your layout
-        val image: ImageView = view.findViewById(R.id.popular_img) // Adjust ID
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.popular_rv_items, parent, false) // Adjust layout if needed
-        return ViewHolder(view)
+            .inflate(R.layout.popular_rv_items, parent, false)
+        return RecipeViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val recipe = recipes[position]
-        holder.title.text = recipe.title
-        Glide.with(holder.itemView.context).load(recipe.imageUrl).into(holder.image)
-        holder.itemView.setOnClickListener { onClick(recipe) }
+    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
+        holder.bind(recipes[position])
     }
 
-    override fun getItemCount() = recipes.size
+    override fun getItemCount(): Int = recipes.size
 
     fun updateRecipes(newRecipes: List<Recipe>) {
-        recipes = newRecipes
+        recipes.clear()
+        recipes.addAll(newRecipes)
         notifyDataSetChanged()
+    }
+
+    inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val imageView: ImageView = itemView.findViewById(R.id.popular_img)
+        private val nameTextView: TextView = itemView.findViewById(R.id.popular_txt)
+        private val timeTextView: TextView = itemView.findViewById(R.id.popular_time)
+
+        fun bind(recipe: Recipe) {
+            nameTextView.text = recipe.title
+            timeTextView.text = if (recipe.prepTime > 0) "⏱ ${recipe.prepTime} Mins" else ""
+
+            Glide.with(itemView.context)
+                .load(recipe.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(imageView)
+
+            itemView.setOnClickListener { onClick(recipe) }
+        }
     }
 }

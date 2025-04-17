@@ -2,6 +2,7 @@ package com.example.recipeapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -22,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class HomeActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var popularRecyclerView: RecyclerView
     private lateinit var popularAdapter: RecipeAdapter
     private val recipesList = mutableListOf<Recipe>()
@@ -33,11 +34,13 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var menuIcon: ImageView
+    private lateinit var searchEditText: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home)
+        firebaseService = FirebaseService(this)
 
         // Window insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -50,6 +53,7 @@ class HomeActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
         menuIcon = findViewById(R.id.imageView)
+        searchEditText = findViewById(R.id.editTextText)
 
         // Set up menu icon to toggle drawer
         menuIcon.setOnClickListener {
@@ -58,6 +62,13 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 drawerLayout.openDrawer(GravityCompat.START)
             }
+        }
+
+        // Set up search EditText to navigate to SearchActivity
+        searchEditText.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            startActivity(intent)
+            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
         // Set up NavigationView menu
@@ -71,7 +82,9 @@ class HomeActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_search -> {
-                    startActivity(Intent(this, SearchActivity::class.java))
+                    val intent = Intent(this, SearchActivity::class.java)
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                     true
                 }
                 R.id.nav_favorites -> {
@@ -124,10 +137,10 @@ class HomeActivity : AppCompatActivity() {
     private fun setupNavigationMenu() {
         // Apply role-based visibility to menu items
         val menu = navigationView.menu
-        menu.findItem(R.id.nav_search)?.isVisible = userRole == "customer" || userRole == "chef"
-        menu.findItem(R.id.nav_favorites)?.isVisible = userRole == "customer" || userRole == "chef"
-        menu.findItem(R.id.nav_shopping_list)?.isVisible = userRole == "customer"
-        // nav_home, nav_profile, nav_logout are visible to all
+        // nav_search is visible to all, so no restriction applied
+        menu.findItem(R.id.nav_favorites)?.isVisible = true
+        menu.findItem(R.id.nav_shopping_list)?.isVisible = true
+        // nav_home, nav_profile, nav_logout, nav_search are visible to all
     }
 
     private suspend fun loadUserData() {

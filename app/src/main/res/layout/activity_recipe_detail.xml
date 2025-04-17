@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".activities.RecipeDetailActivity"> <!-- Fixed typo and added closing quote -->
+    tools:context=".activities.RecipeDetailActivity"
+    android:background="@color/white"> <!-- Fixed typo and added closing quote -->
 
     <LinearLayout
         android:layout_width="match_parent"

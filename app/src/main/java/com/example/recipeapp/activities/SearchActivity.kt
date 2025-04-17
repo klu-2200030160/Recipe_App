@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchActivity : AppCompatActivity() {
-    private val firebaseService = FirebaseService()
+    private lateinit var firebaseService: FirebaseService
     private lateinit var searchEditText: EditText
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var searchAdapter: RecipeAdapter
@@ -29,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
+        firebaseService = FirebaseService(this)
         // Set up Toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -70,6 +70,7 @@ class SearchActivity : AppCompatActivity() {
     private fun searchRecipes(query: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
+
                 val recipes = withContext(Dispatchers.IO) {
                     firebaseService.getRecipes().filter { recipe ->
                         recipe.title.contains(query, ignoreCase = true) ||
