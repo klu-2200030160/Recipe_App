@@ -27,7 +27,6 @@
     <string name="recipe_image_description">Recipe image</string>
 
 
-
     <string-array name="roles_array">
         <item>customer</item>
         <item>chef</item>

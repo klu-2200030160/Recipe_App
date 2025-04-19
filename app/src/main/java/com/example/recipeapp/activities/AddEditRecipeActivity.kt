@@ -1,23 +1,27 @@
 package com.example.recipeapp.activities
 
-import android.Manifest
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.widget.*
+import android.util.Log
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.services.FirebaseService
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AddEditRecipeActivity : AppCompatActivity() {
 
     private lateinit var firebaseService: FirebaseService
-    private lateinit var nameEditText: EditText
+    private lateinit var titleEditText: EditText
     private lateinit var descriptionEditText: EditText
     private lateinit var ingredientsEditText: EditText
     private lateinit var instructionsEditText: EditText
@@ -30,18 +34,14 @@ class AddEditRecipeActivity : AppCompatActivity() {
     private var selectedImageUri: Uri? = null
     private var editingRecipe: Recipe? = null
 
-    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            selectedImageUri = it
-            imagePreview.setImageURI(it)
-        }
-    }
-
-    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-        if (isGranted) {
-            pickImage()
+    private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) {
+            selectedImageUri = uri
+            imagePreview.setImageURI(uri)
+            Log.d("AddEditRecipeActivity", "Image selected: $uri")
         } else {
-            showToast("Permission denied")
+            Log.w("AddEditRecipeActivity", "No image selected")
+            showToast("No image selected")
         }
     }
 
@@ -51,109 +51,115 @@ class AddEditRecipeActivity : AppCompatActivity() {
 
         firebaseService = FirebaseService(this)
 
-        nameEditText = findViewById(R.id.nameEditText)
+        // Check if user is logged in
+        val currentUser = firebaseService.auth.currentUser
+        if (currentUser == null) {
+            Log.e("AddEditRecipeActivity", "No user logged in, UID: null")
+            showToast("Please log in to continue")
+            finish()
+            return
+        }
+        Log.d("AddEditRecipeActivity", "Logged in user UID: ${currentUser.uid}")
+
+        titleEditText = findViewById(R.id.titleEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         ingredientsEditText = findViewById(R.id.ingredientsEditText)
         instructionsEditText = findViewById(R.id.instructionsEditText)
         categoryEditText = findViewById(R.id.categoryEditText)
+        prepTimeEditText = findViewById(R.id.prepTimeEditText)
         imagePreview = findViewById(R.id.imagePreview)
         selectImageButton = findViewById(R.id.selectImageButton)
         saveButton = findViewById(R.id.saveButton)
-        prepTimeEditText = findViewById(R.id.prepTimeEditText)
 
-        selectImageButton.setOnClickListener { checkPermissionAndPickImage() }
-        saveButton.setOnClickListener { saveOrUpdateRecipe() }
+        selectImageButton.setOnClickListener {
+            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+        saveButton.setOnClickListener { saveRecipe() }
 
-        editingRecipe = intent.getParcelableExtra("recipe")
-        editingRecipe?.let { loadRecipeForEditing(it) }
-    }
-
-    private fun checkPermissionAndPickImage() {
-        val permission = if (android.os.Build.VERSION.SDK_INT >= 33) {
-            Manifest.permission.READ_MEDIA_IMAGES
+        editingRecipe = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("recipe", Recipe::class.java)
         } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("recipe")
         }
+        editingRecipe?.let { loadRecipeForEditing(it) }
 
-        when {
-            ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED -> pickImage()
-            else -> requestPermissionLauncher.launch(permission)
+        // Debug user role on start
+        CoroutineScope(Dispatchers.Main).launch {
+            val user = withContext(Dispatchers.IO) { firebaseService.getCurrentUser() }
+            Log.d("AddEditRecipeActivity", "User on start: $user")
         }
-    }
-
-    private fun pickImage() {
-        pickImageLauncher.launch("image/*")
     }
 
     private fun loadRecipeForEditing(recipe: Recipe) {
-        nameEditText.setText(recipe.title)
+        titleEditText.setText(recipe.title)
         descriptionEditText.setText(recipe.description)
         ingredientsEditText.setText(recipe.ingredients.joinToString("\n"))
         instructionsEditText.setText(recipe.instructions)
         categoryEditText.setText(recipe.category)
         prepTimeEditText.setText(recipe.prepTime.toString())
-        // Load image using Glide or similar if needed
     }
 
-    private fun saveOrUpdateRecipe() {
-        val name = nameEditText.text.toString().trim()
+    private fun saveRecipe() {
+        val title = titleEditText.text.toString().trim()
         val description = descriptionEditText.text.toString().trim()
-        val ingredients = ingredientsEditText.text.toString().trim().split("\n").map { it.trim() }.filter { it.isNotBlank() }
+        val ingredients = ingredientsEditText.text.toString().trim()
+            .split("\n").map { it.trim() }.filter { it.isNotBlank() }
         val instructions = instructionsEditText.text.toString().trim()
         val category = categoryEditText.text.toString().trim()
         val prepTime = prepTimeEditText.text.toString().trim().toIntOrNull() ?: 0
 
-        if (name.isEmpty() || ingredients.isEmpty() || instructions.isEmpty()) {
-            showToast("Title, ingredients and instructions are required.")
+        if (title.isEmpty() || ingredients.isEmpty() || instructions.isEmpty()) {
+            showToast("Title, ingredients, and instructions are required")
             return
         }
 
         CoroutineScope(Dispatchers.Main).launch {
+            // Check user role
             val user = withContext(Dispatchers.IO) { firebaseService.getCurrentUser() }
+            Log.d("AddEditRecipeActivity", "User: $user")
             if (user == null) {
-                showToast("Please log in first.")
-                startActivity(Intent(this@AddEditRecipeActivity, LoginActivity::class.java))
+                Log.e("AddEditRecipeActivity", "No user logged in")
+                showToast("Please log in to continue")
                 finish()
                 return@launch
             }
+            if (user.role !in listOf("Chef", "Admin")) {
+                Log.e("AddEditRecipeActivity", "User role '${user.role}' not authorized")
+                showToast("Only chefs or admins can add or update recipes")
+                return@launch
+            }
 
-            val imageUrl = if (selectedImageUri != null) {
-                withContext(Dispatchers.IO) {
-                    firebaseService.uploadImageToFirebaseStorage(
-                        uri = selectedImageUri!!,
-                        fileName = "recipe_${System.currentTimeMillis()}.jpg"
-                    )
-                }
-            } else editingRecipe?.imageUrl
-
+            // Create recipe object
             val recipe = Recipe(
                 id = editingRecipe?.id ?: "",
-                title = name,
+                title = title,
                 description = description,
                 ingredients = ingredients,
                 instructions = instructions,
                 category = category,
-                imageUrl = imageUrl ?: "",
+                imageUrl = editingRecipe?.imageUrl ?: "",
                 createdBy = user.id,
                 prepTime = prepTime
             )
 
-            val result = if (editingRecipe != null) {
-                firebaseService.updateRecipe(recipe, null)
-            } else {
-                firebaseService.addRecipe(recipe, null)
+            // Save recipe
+            val result = withContext(Dispatchers.IO) {
+                firebaseService.saveRecipe(recipe, selectedImageUri)
             }
 
             if (result.isSuccess) {
                 showToast("Recipe ${if (editingRecipe != null) "updated" else "added"} successfully")
                 finish()
             } else {
-                showToast("Error: ${result.exceptionOrNull()?.message}")
+                val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
+                Log.e("AddEditRecipeActivity", "Save failed: $errorMsg")
+                showToast("Failed to save recipe: $errorMsg")
             }
         }
     }
 
-    private fun showToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

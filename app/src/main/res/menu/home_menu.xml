@@ -9,6 +9,10 @@
         android:title="Home"
         android:icon="@drawable/ic_home" />
     <item
+        android:id="@+id/nav_all_recipes"
+        android:title="All Recipes"
+        android:icon="@drawable/ic_recipes" />
+    <item
         android:id="@+id/nav_favorites"
         android:title="Favorites"
         android:icon="@drawable/ic_favourites" />

@@ -1,124 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/titleTextView"
+    <EditText
+        android:id="@+id/titleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Recipe"
-        android:textSize="22sp"
-        android:fontFamily="@font/poppins"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/green"/>
-
-    <EditText
-        android:id="@+id/nameEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="Recipe Name"
-        android:inputType="text"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/titleTextView" />
+        android:hint="Recipe Title"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/descriptionEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Description"
-        android:inputType="textMultiLine"
-        android:minLines="2"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameEditText" />
+        android:inputType="textMultiLine" />
 
     <EditText
         android:id="@+id/ingredientsEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Ingredients (one per line)"
-        android:inputType="textMultiLine"
-        android:minLines="4"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionEditText" />
+        android:inputType="textMultiLine" />
 
     <EditText
         android:id="@+id/instructionsEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Instructions"
-        android:inputType="textMultiLine"
-        android:minLines="4"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ingredientsEditText" />
+        android:inputType="textMultiLine" />
 
     <EditText
         android:id="@+id/categoryEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Category (e.g., Salad, Main)"
-        android:inputType="text"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/instructionsEditText" />
+        android:hint="Category"
+        android:inputType="text" />
 
     <EditText
         android:id="@+id/prepTimeEditText"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:hint="Prep Time (minutes)"
-        android:inputType="number"
-        android:fontFamily="@font/poppinslight"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/categoryEditText" />
+        android:inputType="number" />
 
     <ImageView
         android:id="@+id/imagePreview"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:contentDescription="@string/recipe_image_preview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
         android:scaleType="centerCrop"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prepTimeEditText" />
+        android:contentDescription="Recipe Image Preview" />
 
     <Button
         android:id="@+id/selectImageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins"
-        android:text="Select Image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/prepTimeEditText" />
+        android:text="Select Image" />
 
     <Button
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/poppins"
-        android:text="Save Recipe"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/selectImageButton" />
+        android:text="Save Recipe" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

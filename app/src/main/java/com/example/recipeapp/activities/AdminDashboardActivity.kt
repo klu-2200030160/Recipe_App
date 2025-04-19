@@ -94,6 +94,11 @@ class AdminDashboardActivity : AppCompatActivity() {
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                     true
                 }
+                R.id.nav_all_recipes -> {
+                    val intent = Intent(this, AllRecipesActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
                 R.id.nav_add_recipe -> {
                     val intent = Intent(this, AddEditRecipeActivity::class.java)
                     startActivity(intent)
@@ -155,6 +160,7 @@ class AdminDashboardActivity : AppCompatActivity() {
         val menu = navigationView.menu
         menu.findItem(R.id.nav_search)?.isVisible = true
         menu.findItem(R.id.nav_home)?.isVisible = true
+        menu.findItem(R.id.nav_all_recipes)?.isVisible = true
         menu.findItem(R.id.nav_add_recipe)?.isVisible = true
         menu.findItem(R.id.nav_UserManagement)?.isVisible = true
         menu.findItem(R.id.nav_recipe_management)?.isVisible = true

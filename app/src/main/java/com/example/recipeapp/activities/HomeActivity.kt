@@ -2,35 +2,33 @@ package com.example.recipeapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.recipeapp.R
 import com.example.recipeapp.adapters.RecipeAdapter
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.services.FirebaseService
+import com.example.recipeapp.utils.ToastUtils
 import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeActivity : AppCompatActivity() {
+
     private lateinit var firebaseService: FirebaseService
     private lateinit var popularRecyclerView: RecyclerView
     private lateinit var popularAdapter: RecipeAdapter
     private val recipesList = mutableListOf<Recipe>()
-    private var userRole: String? = null
-    private var currentUserId: String? = null
-
-    // Drawer
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var menuIcon: ImageView
@@ -38,24 +36,15 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_home)
+
         firebaseService = FirebaseService(this)
 
-        // Window insets
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        // Drawer setup
         drawerLayout = findViewById(R.id.drawerLayout)
         navigationView = findViewById(R.id.navigationView)
         menuIcon = findViewById(R.id.imageView)
         searchEditText = findViewById(R.id.editTextText)
 
-        // Set up menu icon to toggle drawer
         menuIcon.setOnClickListener {
             if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START)
@@ -64,27 +53,39 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
-        // Set up search EditText to navigate to SearchActivity
         searchEditText.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SearchActivity::class.java))
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
-        // Set up NavigationView menu
-        setupNavigationMenu()
+        setupNavigationView()
+        setupNavigationHeader()
 
-        // Handle navigation item clicks
+        popularRecyclerView = findViewById(R.id.rv_popular)
+        popularRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        popularAdapter = RecipeAdapter(recipesList) { recipe ->
+            val intent = Intent(this, RecipeDetailActivity::class.java)
+            intent.putExtra("recipe", recipe)
+            startActivity(intent)
+        }
+        popularRecyclerView.adapter = popularAdapter
+
+        CoroutineScope(Dispatchers.Main).launch {
+            loadPopularRecipes()
+        }
+    }
+
+    private fun setupNavigationView() {
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    // Already in HomeActivity, do nothing or refresh if needed
+                R.id.nav_home -> true
+                R.id.nav_search -> {
+                    startActivity(Intent(this, SearchActivity::class.java))
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                     true
                 }
-                R.id.nav_search -> {
-                    val intent = Intent(this, SearchActivity::class.java)
-                    startActivity(intent)
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+                R.id.nav_all_recipes -> {
+                    startActivity(Intent(this, AllRecipesActivity::class.java))
                     true
                 }
                 R.id.nav_favorites -> {
@@ -106,7 +107,7 @@ class HomeActivity : AppCompatActivity() {
                             startActivity(Intent(this@HomeActivity, LoginActivity::class.java))
                             finish()
                         } catch (e: Exception) {
-                            showToast("Logout failed: ${e.message}")
+                            ToastUtils.showShort(this@HomeActivity, "Logout failed: ${e.message}")
                         }
                     }
                     true
@@ -116,62 +117,58 @@ class HomeActivity : AppCompatActivity() {
                 drawerLayout.closeDrawer(GravityCompat.START)
             }
         }
+    }
 
-        // RecyclerView for popular recipes
-        popularRecyclerView = findViewById(R.id.rv_popular)
-        popularRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        popularAdapter = RecipeAdapter(recipesList) { recipe ->
-            val intent = Intent(this, RecipeDetailActivity::class.java)
-            intent.putExtra("recipe", recipe)
-            startActivity(intent)
-        }
-        popularRecyclerView.adapter = popularAdapter
-
-        // Load data
+    private fun setupNavigationHeader() {
         CoroutineScope(Dispatchers.Main).launch {
-            loadUserData()
-            loadPopularRecipes()
-        }
-    }
+            try {
+                val user = withContext(Dispatchers.IO) {
+                    firebaseService.getCurrentUser()
+                }
+                if (user == null) {
+                    Log.e("HomeActivity", "User is null")
+                    ToastUtils.showShort(this@HomeActivity, "Failed to load user data")
+                    return@launch
+                }
+                Log.d("HomeActivity", "User fetched: $user")
+                val headerView = navigationView.getHeaderView(0)
+                val nameTextView = headerView.findViewById<TextView>(R.id.tv_nav_name)
+                val emailTextView = headerView.findViewById<TextView>(R.id.tv_nav_email)
+                val profileImageView = headerView.findViewById<ImageView>(R.id.iv_nav_profile_image)
+                val welcomeTextView = headerView.findViewById<TextView>(R.id.tv_welcome)
 
-    private fun setupNavigationMenu() {
-        // Apply role-based visibility to menu items
-        val menu = navigationView.menu
-        // nav_search is visible to all, so no restriction applied
-        menu.findItem(R.id.nav_favorites)?.isVisible = true
-        menu.findItem(R.id.nav_shopping_list)?.isVisible = true
-        // nav_home, nav_profile, nav_logout, nav_search are visible to all
-    }
-
-    private suspend fun loadUserData() {
-        firebaseService.getCurrentUser()?.let { user ->
-            userRole = user.role
-            currentUserId = user.id
-            title = "Home - ${userRole?.replaceFirstChar { it.uppercaseChar() }}"
-            setupNavigationMenu() // Update menu visibility after role is loaded
-        } ?: run {
-            showToast("User not authenticated")
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+                nameTextView.text = user.name?.takeIf { it.isNotEmpty() } ?: user.username
+                emailTextView.text = user.email
+                welcomeTextView.text = "Welcome, ${user.name?.takeIf { it.isNotEmpty() } ?: user.username}!"
+                if (!user.profileImageUrl.isNullOrEmpty()) {
+                    Glide.with(this@HomeActivity)
+                        .load(user.profileImageUrl)
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_profile)
+                        .into(profileImageView)
+                } else {
+                    profileImageView.setImageResource(R.drawable.ic_profile)
+                }
+            } catch (e: Exception) {
+                Log.e("HomeActivity", "Failed to load navigation header: ${e.message}", e)
+                ToastUtils.showShort(this@HomeActivity, "Failed to load navigation header: ${e.message}")
+            }
         }
     }
 
     private suspend fun loadPopularRecipes() {
         try {
-            val popularRecipes = firebaseService.getRecipes()
+            val popularRecipes = firebaseService.getPopularRecipes()
             recipesList.clear()
             recipesList.addAll(popularRecipes)
             popularAdapter.notifyDataSetChanged()
             if (recipesList.isEmpty()) {
-                showToast("No popular recipes found")
+                ToastUtils.showShort(this, "No popular recipes found")
             }
         } catch (e: Exception) {
-            showToast("Failed to load recipes: ${e.message}")
+            Log.e("HomeActivity", "Failed to load recipes: ${e.message}", e)
+            ToastUtils.showShort(this, "Failed to load recipes: ${e.message}")
         }
-    }
-
-    private fun showToast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun onBackPressed() {

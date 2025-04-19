@@ -1,14 +1,19 @@
 package com.example.recipeapp.models
 
-import kotlinx.parcelize.Parcelize
 import android.os.Parcelable
+import com.google.firebase.firestore.PropertyName
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
-    val id: String = "",
-    val email: String = "",
-    val username: String = "",
-    val role: String = "customer",
-    val favorites: List<String> = emptyList(),
-    val shoppingList: List<String> = emptyList() // Added for shopping list
+    @PropertyName("id") val id: String = "",
+    @PropertyName("email") val email: String = "",
+    @PropertyName("username") val username: String = "",
+    @PropertyName("role") val role: String = "customer",
+    @PropertyName("name") val name: String = "",
+    @PropertyName("age") val age: Int = 0,
+    @PropertyName("mobile") val mobile: String = "",
+    @PropertyName("profileImageUrl") val profileImageUrl: String = "",
+    @PropertyName("favorites") val favorites: List<String> = emptyList(),
+    @PropertyName("shoppingList") val shoppingList: List<String> = emptyList()
 ) : Parcelable

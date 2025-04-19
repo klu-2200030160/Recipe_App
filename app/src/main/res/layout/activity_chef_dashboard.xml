@@ -320,7 +320,7 @@
         android:layout_gravity="start"
         android:background="@android:color/white"
         app:itemIconTint="@color/green"
-        app:menu="@menu/home_menu"
+        app:menu="@menu/chef_menu"
         app:headerLayout="@layout/nav_header" />
 
 </androidx.drawerlayout.widget.DrawerLayout>

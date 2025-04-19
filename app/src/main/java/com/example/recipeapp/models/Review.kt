@@ -1,10 +1,10 @@
 package com.example.recipeapp.models
 
+import com.google.firebase.firestore.PropertyName
+
 data class Review(
-    val id: String = "",
-    val recipeId: String = "",
-    val userId: String = "",
-    val comment: String = "",
-    val rating: Float = 0f,
-    val timestamp: Long = System.currentTimeMillis()
+    @PropertyName("id") val id: String = "",
+    @PropertyName("recipeId") val recipeId: String = "",
+    @PropertyName("comment") val comment: String = "",
+    @PropertyName("rating") val rating: Float = 0f
 )

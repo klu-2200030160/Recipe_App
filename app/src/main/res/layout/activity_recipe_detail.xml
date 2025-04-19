@@ -1,77 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    tools:context=".activities.RecipeDetailActivity"
-    android:background="@color/white"> <!-- Fixed typo and added closing quote -->
-
-    <LinearLayout
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:orientation="vertical"
+        tools:context=".activities.RecipeDetailActivity"
+        android:background="@color/white">
 
         <TextView
             android:id="@+id/titleTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp" />
 
-        <ImageView
-            android:id="@+id/recipeImageView"
+        <TextView
+            android:id="@+id/descriptionTextView"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/ingredientsTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/instructionsTextView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:paddingTop="8dp"/>
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/categoryTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/prepTimeTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/reviewEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Write a review"
-            android:paddingTop="8dp"/>
+            android:hint="Write a review" />
 
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:numStars="5"
-            android:stepSize="0.5"/>
+            android:layout_height="wrap_content" />
 
         <Button
             android:id="@+id/submitReviewButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Submit Review"
-            android:layout_marginTop="8dp"/>
+            android:text="Submit Review" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviewsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="match_parent" />
+
     </LinearLayout>
-</ScrollView>
