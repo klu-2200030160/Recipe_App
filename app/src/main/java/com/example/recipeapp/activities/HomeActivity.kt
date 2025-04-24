@@ -28,7 +28,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var firebaseService: FirebaseService
     private lateinit var popularRecyclerView: RecyclerView
     private lateinit var popularAdapter: RecipeAdapter
-    private val recipesList = mutableListOf<Recipe>()
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
     private lateinit var menuIcon: ImageView
@@ -63,7 +62,7 @@ class HomeActivity : AppCompatActivity() {
 
         popularRecyclerView = findViewById(R.id.rv_popular)
         popularRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        popularAdapter = RecipeAdapter(recipesList) { recipe ->
+        popularAdapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)
             intent.putExtra("recipe", recipe)
             startActivity(intent)
@@ -158,11 +157,12 @@ class HomeActivity : AppCompatActivity() {
 
     private suspend fun loadPopularRecipes() {
         try {
-            val popularRecipes = firebaseService.getPopularRecipes()
-            recipesList.clear()
-            recipesList.addAll(popularRecipes)
-            popularAdapter.notifyDataSetChanged()
-            if (recipesList.isEmpty()) {
+            val popularRecipes = withContext(Dispatchers.IO) {
+                firebaseService.getPopularRecipes()
+            }
+            println("HomeActivity: Fetched ${popularRecipes.size} popular recipes")
+            popularAdapter.submitList(popularRecipes)
+            if (popularRecipes.isEmpty()) {
                 ToastUtils.showShort(this, "No popular recipes found")
             }
         } catch (e: Exception) {

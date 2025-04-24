@@ -116,28 +116,30 @@ class FirebaseService(context: Context) {
         Log.d("FirebaseService", "Attempting to save recipe: $recipeId for user: $userId")
 
         val imageUrl = imageUri?.let {
-            withContext(Dispatchers.IO) {
+            try {
                 val storageRef = storage.reference.child("recipe_images/$recipeId.jpg")
                 storageRef.putFile(it).await()
                 val url = storageRef.downloadUrl.await().toString()
-                Log.d("FirebaseService", "Image uploaded: $url")
+                Log.d("FirebaseService", "Recipe image uploaded: $url")
                 url
+            } catch (e: Exception) {
+                Log.e("FirebaseService", "Recipe image upload failed: ${e.message}", e)
+                null
             }
-        } ?: recipe.imageUrl
+        }
 
         val finalRecipe = recipe.copy(
             id = recipeId,
             createdBy = userId,
-            imageUrl = imageUrl
+            imageUrl = imageUrl ?: recipe.imageUrl
         )
-        Log.d("FirebaseService", "Writing recipe to Firestore: $finalRecipe")
         db.collection("recipes").document(recipeId).set(finalRecipe).await()
-        Log.d("FirebaseService", "Recipe saved: $recipeId")
         Result.success(recipeId)
     } catch (e: Exception) {
         Log.e("FirebaseService", "Save recipe failed: ${e.message}", e)
         Result.failure(e)
     }
+
 
     // Delete recipe
     suspend fun deleteRecipe(recipeId: String): Result<Unit> = try {
@@ -231,26 +233,45 @@ class FirebaseService(context: Context) {
     }
 
     // Get all users (for admin)
-    suspend fun getAllUsers(): List<User> = try {
-        val snapshot = db.collection("users").get().await()
-        snapshot.documents.mapNotNull { doc ->
-            doc.toObject(User::class.java)?.copy(id = doc.id)
+    suspend fun getAllUsers(): List<User> = withContext(Dispatchers.IO) {
+        val usersList = mutableListOf<User>()
+        try {
+            val snapshot = db.collection("users").get().await()
+            for (document in snapshot.documents) {
+                try {
+                    val user = document.toObject(User::class.java)
+                    if (user != null) {
+                        user.id = document.id  // ✅ Set Firestore doc ID
+                        usersList.add(user)
+                    }
+                } catch (e: Exception) {
+                    Log.e("FirebaseService", "Failed to parse user: ${e.message}", e)
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Get all users failed: ${e.message}", e)
         }
-    } catch (e: Exception) {
-        Log.e("FirebaseService", "Get all users failed: ${e.message}", e)
-        emptyList()
+        return@withContext usersList
     }
 
+
+
     // Delete user (for admin)
-    suspend fun deleteUser(userId: String): Result<Unit> = try {
-        db.collection("users").document(userId).delete().await()
-        storage.reference.child("profile_images/$userId.jpg").delete().await()
-        Log.d("FirebaseService", "User deleted: $userId")
-        Result.success(Unit)
-    } catch (e: Exception) {
-        Log.e("FirebaseService", "Delete user failed: ${e.message}", e)
-        Result.failure(e)
+    suspend fun deleteUser(user: User): Boolean {
+        return try {
+            if (user.id.isBlank()) {
+                throw IllegalArgumentException("User ID is blank")
+            }
+            db.collection("users").document(user.id).delete().await()
+            true
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Delete user failed: ${e.message}", e)
+            false
+        }
     }
+
+
+
 
     // Get reviews for a recipe
     suspend fun getReviews(recipeId: String): List<Review> = try {
@@ -287,5 +308,22 @@ class FirebaseService(context: Context) {
     } catch (e: Exception) {
         Log.e("FirebaseService", "Failed to update role: ${e.message}", e)
         Result.failure(e)
+    }
+    // Get recipes by user ID
+    suspend fun getRecipesByUser(userId: String): List<Recipe> = try {
+        val snapshot = db.collection("recipes")
+            .whereEqualTo("createdBy", userId)
+            .get().await()
+        snapshot.documents.mapNotNull { it.toObject(Recipe::class.java) }
+    } catch (e: Exception) {
+        Log.e("FirebaseService", "Get recipes by user failed: ${e.message}", e)
+        emptyList()
+    }
+    suspend fun getAllRecipes(): List<Recipe> = try {
+        val snapshot = db.collection("recipes").get().await()
+        snapshot.documents.mapNotNull { it.toObject(Recipe::class.java) }
+    } catch (e: Exception) {
+        Log.e("FirebaseService", "Get all recipes failed: ${e.message}", e)
+        emptyList()
     }
 }

@@ -20,7 +20,6 @@ class AllRecipesActivity : AppCompatActivity() {
     private lateinit var firebaseService: FirebaseService
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: RecipeAdapter
-    private val recipesList = mutableListOf<Recipe>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +33,7 @@ class AllRecipesActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = RecipeAdapter(recipesList) { recipe ->
+        adapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)
             intent.putExtra("recipe", recipe)
             startActivity(intent)
@@ -51,10 +50,9 @@ class AllRecipesActivity : AppCompatActivity() {
             val recipes = withContext(Dispatchers.IO) {
                 firebaseService.getRecipes()
             }
-            recipesList.clear()
-            recipesList.addAll(recipes)
-            adapter.notifyDataSetChanged()
-            if (recipesList.isEmpty()) {
+            println("AllRecipesActivity: Fetched ${recipes.size} recipes")
+            adapter.submitList(recipes)
+            if (recipes.isEmpty()) {
                 ToastUtils.showShort(this, "No recipes found")
             }
         } catch (e: Exception) {

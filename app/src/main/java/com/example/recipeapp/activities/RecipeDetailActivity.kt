@@ -1,3 +1,4 @@
+
 package com.example.recipeapp.activities
 
 import android.os.Build
@@ -6,14 +7,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.RatingBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.models.Review
@@ -32,11 +30,12 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var instructionsTextView: TextView
     private lateinit var categoryTextView: TextView
     private lateinit var prepTimeTextView: TextView
+    private lateinit var recipeImageView: ImageView
     private lateinit var reviewEditText: EditText
     private lateinit var ratingBar: RatingBar
     private lateinit var submitReviewButton: Button
     private lateinit var reviewsRecyclerView: RecyclerView
-    private lateinit var reviewAdapter: ReviewAdapter // Assume a RecyclerView adapter
+    private lateinit var reviewAdapter: ReviewAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +48,16 @@ class RecipeDetailActivity : AppCompatActivity() {
         instructionsTextView = findViewById(R.id.instructionsTextView)
         categoryTextView = findViewById(R.id.categoryTextView)
         prepTimeTextView = findViewById(R.id.prepTimeTextView)
+        recipeImageView = findViewById(R.id.recipeImageView)
         reviewEditText = findViewById(R.id.reviewEditText)
         ratingBar = findViewById(R.id.ratingBar)
         submitReviewButton = findViewById(R.id.submitReviewButton)
         reviewsRecyclerView = findViewById(R.id.reviewsRecyclerView)
 
-        // Set up RecyclerView
         reviewAdapter = ReviewAdapter()
         reviewsRecyclerView.adapter = reviewAdapter
         reviewsRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Load recipe
         val recipe = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("recipe", Recipe::class.java)
         } else {
@@ -74,17 +72,20 @@ class RecipeDetailActivity : AppCompatActivity() {
             return
         }
 
-        // Display recipe details
         titleTextView.text = recipe.title
         descriptionTextView.text = recipe.description
         ingredientsTextView.text = recipe.ingredients.joinToString("\n")
         instructionsTextView.text = recipe.instructions
         categoryTextView.text = recipe.category
-        prepTimeTextView.text = "${recipe.prepTime} minutes"
+        prepTimeTextView.text = "\${recipe.prepTime} minutes"
 
-        // Load reviews
+        Glide.with(this)
+            .load(recipe.imageUrl)
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.placeholder_image)
+            .into(recipeImageView)
+
         loadReviews(recipe.id)
-
         submitReviewButton.setOnClickListener { submitReview(recipe.id) }
     }
 
@@ -93,7 +94,7 @@ class RecipeDetailActivity : AppCompatActivity() {
             val reviews = withContext(Dispatchers.IO) {
                 firebaseService.getReviews(recipeId)
             }
-            Log.d("RecipeDetailActivity", "Loaded reviews: $reviews")
+            Log.d("RecipeDetailActivity", "Loaded reviews: \$reviews")
             reviewAdapter.submitList(reviews)
         }
     }
@@ -133,8 +134,8 @@ class RecipeDetailActivity : AppCompatActivity() {
                 loadReviews(recipeId)
             } else {
                 val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
-                Log.e("RecipeDetailActivity", "Submit review failed: $errorMsg")
-                showToast("Failed to submit review: $errorMsg")
+                Log.e("RecipeDetailActivity", "Submit review failed: \$errorMsg")
+                showToast("Failed to submit review: \$errorMsg")
             }
         }
     }
@@ -144,7 +145,6 @@ class RecipeDetailActivity : AppCompatActivity() {
     }
 }
 
-// Placeholder ReviewAdapter (adjust to your implementation)
 class ReviewAdapter : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
     private var reviews: List<Review> = emptyList()
 

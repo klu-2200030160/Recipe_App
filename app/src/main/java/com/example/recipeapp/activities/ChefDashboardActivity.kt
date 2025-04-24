@@ -24,12 +24,12 @@ import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ChefDashboardActivity : AppCompatActivity() {
     private lateinit var firebaseService: FirebaseService
     private lateinit var popularRecyclerView: RecyclerView
     private lateinit var popularAdapter: RecipeAdapter
-    private val recipesList = mutableListOf<Recipe>()
     private var userRole: String? = null
     private var currentUserId: String? = null
 
@@ -45,7 +45,7 @@ class ChefDashboardActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_chef_dashboard) // Verify this matches your layout file
+        setContentView(R.layout.activity_chef_dashboard)
         checkStoragePermissions()
         firebaseService = FirebaseService(this)
 
@@ -58,7 +58,7 @@ class ChefDashboardActivity : AppCompatActivity() {
 
         // Drawer setup
         drawerLayout = findViewById(R.id.drawerLayout)
-        navigationView = findViewById(R.id.navigationView) // Updated to match XML ID
+        navigationView = findViewById(R.id.navigationView)
         menuIcon = findViewById(R.id.imageView)
         searchEditText = findViewById(R.id.editTextText)
 
@@ -84,10 +84,7 @@ class ChefDashboardActivity : AppCompatActivity() {
         // Handle navigation item clicks
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_home -> {
-                    // Already in AdminDashboardActivity, do nothing or refresh if needed
-                    true
-                }
+                R.id.nav_home -> true
                 R.id.nav_search -> {
                     val intent = Intent(this, SearchActivity::class.java)
                     startActivity(intent)
@@ -106,14 +103,11 @@ class ChefDashboardActivity : AppCompatActivity() {
                 }
                 R.id.nav_UserManagement -> {
                     Toast.makeText(this, "User Management clicked", Toast.LENGTH_SHORT).show()
-                    // Uncomment and replace with actual activity when implemented
-                    // startActivity(Intent(this, UserManagementActivity::class.java))
                     true
                 }
                 R.id.nav_recipe_management -> {
-                    Toast.makeText(this, "Recipe Management clicked", Toast.LENGTH_SHORT).show()
-                    // Uncomment and replace with actual activity when implemented
-                    // startActivity(Intent(this, RecipeManagementActivity::class.java))
+                    val intent = Intent(this, RecipeManagementActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_profile -> {
@@ -138,10 +132,10 @@ class ChefDashboardActivity : AppCompatActivity() {
             }
         }
 
-        // RecyclerView for popular recipes
+        // RecyclerView for chef's recipes
         popularRecyclerView = findViewById(R.id.rv_popular)
         popularRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        popularAdapter = RecipeAdapter(recipesList) { recipe ->
+        popularAdapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)
             intent.putExtra("recipe", recipe)
             startActivity(intent)
@@ -156,13 +150,12 @@ class ChefDashboardActivity : AppCompatActivity() {
     }
 
     private fun setupNavigationMenu() {
-        // Make all items visible for admin
         val menu = navigationView.menu
         menu.findItem(R.id.nav_search)?.isVisible = true
         menu.findItem(R.id.nav_home)?.isVisible = true
         menu.findItem(R.id.nav_all_recipes)?.isVisible = true
         menu.findItem(R.id.nav_add_recipe)?.isVisible = true
-        menu.findItem(R.id.nav_UserManagement)?.isVisible = true
+        menu.findItem(R.id.nav_UserManagement)?.isVisible = false // Hidden for chefs
         menu.findItem(R.id.nav_recipe_management)?.isVisible = true
         menu.findItem(R.id.nav_profile)?.isVisible = true
         menu.findItem(R.id.nav_logout)?.isVisible = true
@@ -172,8 +165,8 @@ class ChefDashboardActivity : AppCompatActivity() {
         firebaseService.getCurrentUser()?.let { user ->
             userRole = user.role
             currentUserId = user.id
-            title = "Admin Dashboard - ${userRole?.replaceFirstChar { it.uppercaseChar() }}"
-            setupNavigationMenu() // Ensure menu is set up
+            title = "Chef Dashboard - ${userRole?.replaceFirstChar { it.uppercaseChar() }}"
+            setupNavigationMenu()
         } ?: run {
             showToast("User not authenticated")
             startActivity(Intent(this, LoginActivity::class.java))
@@ -183,12 +176,13 @@ class ChefDashboardActivity : AppCompatActivity() {
 
     private suspend fun loadPopularRecipes() {
         try {
-            val popularRecipes = firebaseService.getRecipes()
-            recipesList.clear()
-            recipesList.addAll(popularRecipes)
-            popularAdapter.notifyDataSetChanged()
-            if (recipesList.isEmpty()) {
-                showToast("No popular recipes found")
+            val chefRecipes = withContext(Dispatchers.IO) {
+                firebaseService.getRecipes().filter { it.createdBy == currentUserId }
+            }
+            println("ChefDashboardActivity: Fetched ${chefRecipes.size} recipes")
+            popularAdapter.submitList(chefRecipes)
+            if (chefRecipes.isEmpty()) {
+                showToast("No recipes found")
             }
         } catch (e: Exception) {
             showToast("Failed to load recipes: ${e.message}")
@@ -209,14 +203,12 @@ class ChefDashboardActivity : AppCompatActivity() {
 
     private fun checkStoragePermissions() {
         val permissions = if (android.os.Build.VERSION.SDK_INT >= 33) {
-            // Android 13 and above
             arrayOf(
                 android.Manifest.permission.READ_MEDIA_IMAGES,
                 android.Manifest.permission.READ_MEDIA_VIDEO,
                 android.Manifest.permission.READ_MEDIA_AUDIO
             )
         } else {
-            // Android 12 and below
             arrayOf(
                 android.Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE

@@ -1,19 +1,25 @@
 package com.example.recipeapp.adapters
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
+import com.bumptech.glide.load.engine.GlideException
 
 class RecipeAdapter(
-    private var recipes: MutableList<Recipe> = mutableListOf(),
     private val onClick: (Recipe) -> Unit
-) : RecyclerView.Adapter<RecipeAdapter.RecipeViewHolder>() {
+) : ListAdapter<Recipe, RecipeAdapter.RecipeViewHolder>(RecipeDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -22,15 +28,7 @@ class RecipeAdapter(
     }
 
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
-        holder.bind(recipes[position])
-    }
-
-    override fun getItemCount(): Int = recipes.size
-
-    fun updateRecipes(newRecipes: List<Recipe>) {
-        recipes.clear()
-        recipes.addAll(newRecipes)
-        notifyDataSetChanged()
+        holder.bind(getItem(position))
     }
 
     inner class RecipeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -46,9 +44,41 @@ class RecipeAdapter(
                 .load(recipe.imageUrl)
                 .placeholder(R.drawable.placeholder_image)
                 .error(R.drawable.placeholder_image)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        println("Glide: Image load failed for ${recipe.imageUrl}: ${e?.message}")
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable,
+                        model: Any,
+                        target: Target<Drawable>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        println("Glide: Image loaded: ${recipe.imageUrl}")
+                        return false
+                    }
+                })
                 .into(imageView)
 
             itemView.setOnClickListener { onClick(recipe) }
         }
+    }
+}
+
+class RecipeDiffCallback : DiffUtil.ItemCallback<Recipe>() {
+    override fun areItemsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: Recipe, newItem: Recipe): Boolean {
+        return oldItem == newItem
     }
 }

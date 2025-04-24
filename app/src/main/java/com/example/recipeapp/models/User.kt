@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class User(
-    @PropertyName("id") val id: String = "",
+    @PropertyName("id") var id: String = "",
     @PropertyName("email") val email: String = "",
     @PropertyName("username") val username: String = "",
     @PropertyName("role") val role: String = "customer",

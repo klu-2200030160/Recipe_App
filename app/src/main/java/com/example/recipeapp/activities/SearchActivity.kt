@@ -1,12 +1,12 @@
 package com.example.recipeapp.activities
 
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
+import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipeapp.R
@@ -23,13 +23,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var searchAdapter: RecipeAdapter
-    private val searchResults = mutableListOf<Recipe>()
-    private val minQueryLength = 2 // Minimum characters before searching
+    private val minQueryLength = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
         firebaseService = FirebaseService(this)
+
         // Set up Toolbar
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -41,7 +41,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Set up RecyclerView
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchAdapter = RecipeAdapter(searchResults) { recipe ->
+        searchAdapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)
             intent.putExtra("recipe", recipe)
             startActivity(intent)
@@ -57,8 +57,7 @@ class SearchActivity : AppCompatActivity() {
                 if (query.length >= minQueryLength) {
                     searchRecipes(query)
                 } else {
-                    searchResults.clear()
-                    searchAdapter.notifyDataSetChanged()
+                    searchAdapter.submitList(emptyList())
                 }
             }
         })
@@ -70,7 +69,6 @@ class SearchActivity : AppCompatActivity() {
     private fun searchRecipes(query: String) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
-
                 val recipes = withContext(Dispatchers.IO) {
                     firebaseService.getRecipes().filter { recipe ->
                         recipe.title.contains(query, ignoreCase = true) ||
@@ -78,10 +76,8 @@ class SearchActivity : AppCompatActivity() {
                                 recipe.instructions.contains(query, ignoreCase = true)
                     }
                 }
-                searchResults.clear()
-                searchResults.addAll(recipes)
-                searchAdapter.notifyDataSetChanged()
-                if (searchResults.isEmpty()) {
+                searchAdapter.submitList(recipes)
+                if (recipes.isEmpty()) {
                     showToast("No recipes found for \"$query\"")
                 }
             } catch (e: Exception) {
