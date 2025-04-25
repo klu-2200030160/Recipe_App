@@ -35,7 +35,9 @@ class UserManagementActivity : AppCompatActivity() {
         firebaseService = FirebaseService(this)
         userAdapter = UserAdapter(
             onEditClick = { user ->
-                Toast.makeText(this, "Edit ${user.email}", Toast.LENGTH_SHORT).show()
+                val Intent= Intent(this, AddEditUserActivity::class.java)
+                Intent.putExtra("USER_ID", user.id)
+                startActivity(Intent)
             },
             onDeleteClick = { user -> deleteUser(user) }
         )

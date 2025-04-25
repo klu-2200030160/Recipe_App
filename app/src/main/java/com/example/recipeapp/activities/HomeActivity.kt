@@ -56,6 +56,8 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, SearchActivity::class.java))
             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
+        CategoryRecipesActivity.setupCategoryClicks(this)
+
 
         setupNavigationView()
         setupNavigationHeader()

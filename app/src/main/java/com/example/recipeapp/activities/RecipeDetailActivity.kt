@@ -1,4 +1,3 @@
-
 package com.example.recipeapp.activities
 
 import android.os.Build
@@ -16,10 +15,7 @@ import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.models.Review
 import com.example.recipeapp.services.FirebaseService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class RecipeDetailActivity : AppCompatActivity() {
 
@@ -36,12 +32,16 @@ class RecipeDetailActivity : AppCompatActivity() {
     private lateinit var submitReviewButton: Button
     private lateinit var reviewsRecyclerView: RecyclerView
     private lateinit var reviewAdapter: ReviewAdapter
+    private lateinit var averageRatingTextView: TextView
+    private lateinit var averageRatingBar: RatingBar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_detail)
 
         firebaseService = FirebaseService(this)
+
+        // View Initialization
         titleTextView = findViewById(R.id.titleTextView)
         descriptionTextView = findViewById(R.id.descriptionTextView)
         ingredientsTextView = findViewById(R.id.ingredientsTextView)
@@ -53,7 +53,10 @@ class RecipeDetailActivity : AppCompatActivity() {
         ratingBar = findViewById(R.id.ratingBar)
         submitReviewButton = findViewById(R.id.submitReviewButton)
         reviewsRecyclerView = findViewById(R.id.reviewsRecyclerView)
+        averageRatingTextView = findViewById(R.id.averageRatingTextView)
+        averageRatingBar = findViewById(R.id.ratingBar)
 
+        // Setup reviews list
         reviewAdapter = ReviewAdapter()
         reviewsRecyclerView.adapter = reviewAdapter
         reviewsRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -66,18 +69,18 @@ class RecipeDetailActivity : AppCompatActivity() {
         }
 
         if (recipe == null) {
-            Log.e("RecipeDetailActivity", "No recipe provided")
             showToast("Error: No recipe provided")
             finish()
             return
         }
 
+        // Fill UI with recipe data
         titleTextView.text = recipe.title
         descriptionTextView.text = recipe.description
         ingredientsTextView.text = recipe.ingredients.joinToString("\n")
         instructionsTextView.text = recipe.instructions
         categoryTextView.text = recipe.category
-        prepTimeTextView.text = "\${recipe.prepTime} minutes"
+        prepTimeTextView.text = "${recipe.prepTime} minutes"
 
         Glide.with(this)
             .load(recipe.imageUrl)
@@ -85,8 +88,16 @@ class RecipeDetailActivity : AppCompatActivity() {
             .error(R.drawable.placeholder_image)
             .into(recipeImageView)
 
+        // Load reviews and increment views
         loadReviews(recipe.id)
-        submitReviewButton.setOnClickListener { submitReview(recipe.id) }
+        CoroutineScope(Dispatchers.IO).launch {
+            firebaseService.incrementRecipeViews(recipe.id)
+        }
+
+        // Submit review
+        submitReviewButton.setOnClickListener {
+            submitReview(recipe.id)
+        }
     }
 
     private fun loadReviews(recipeId: String) {
@@ -94,8 +105,17 @@ class RecipeDetailActivity : AppCompatActivity() {
             val reviews = withContext(Dispatchers.IO) {
                 firebaseService.getReviews(recipeId)
             }
-            Log.d("RecipeDetailActivity", "Loaded reviews: \$reviews")
+
             reviewAdapter.submitList(reviews)
+
+            if (reviews.isNotEmpty()) {
+                val avgRating = reviews.map { it.rating }.average().toFloat()
+                averageRatingTextView.text = String.format("%.1f/5", avgRating)
+                averageRatingBar.rating = avgRating
+            } else {
+                averageRatingTextView.text = "No ratings"
+                averageRatingBar.rating = 0f
+            }
         }
     }
 
@@ -111,7 +131,6 @@ class RecipeDetailActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.Main).launch {
             val user = withContext(Dispatchers.IO) { firebaseService.getCurrentUser() }
             if (user == null) {
-                Log.e("RecipeDetailActivity", "No user logged in")
                 showToast("Please log in to submit a review")
                 finish()
                 return@launch
@@ -120,10 +139,11 @@ class RecipeDetailActivity : AppCompatActivity() {
             val review = Review(
                 recipeId = recipeId,
                 comment = comment,
-                rating = rating
+                rating = rating,
+                userId = user.id
             )
 
-            val result: Result<String> = withContext(Dispatchers.IO) {
+            val result = withContext(Dispatchers.IO) {
                 firebaseService.addReview(review)
             }
 
@@ -134,8 +154,7 @@ class RecipeDetailActivity : AppCompatActivity() {
                 loadReviews(recipeId)
             } else {
                 val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
-                Log.e("RecipeDetailActivity", "Submit review failed: \$errorMsg")
-                showToast("Failed to submit review: \$errorMsg")
+                showToast("Failed to submit review: $errorMsg")
             }
         }
     }
@@ -149,7 +168,8 @@ class ReviewAdapter : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
     private var reviews: List<Review> = emptyList()
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // Bind review data to views
+        val commentTextView: TextView = itemView.findViewById(R.id.reviewCommentTextView)
+        val ratingBar: RatingBar = itemView.findViewById(R.id.reviewRatingBar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -159,7 +179,8 @@ class ReviewAdapter : RecyclerView.Adapter<ReviewAdapter.ViewHolder>() {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val review = reviews[position]
-        // Bind data (e.g., comment, rating)
+        holder.commentTextView.text = review.comment
+        holder.ratingBar.rating = review.rating
     }
 
     override fun getItemCount(): Int = reviews.size

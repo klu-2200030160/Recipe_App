@@ -1,7 +1,7 @@
 package com.example.recipeapp.activities
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -31,16 +31,23 @@ class RecipeManagementActivity : AppCompatActivity() {
         addRecipeFab = findViewById(R.id.addRecipeFab)
         firebaseService = FirebaseService(this)
 
+        // Adapter with edit and delete logic
         recipeManageAdapter = RecipeManageAdapter(
-            onEditClick = { recipe -> Toast.makeText(this, "Edit: ${recipe.title}", Toast.LENGTH_SHORT).show() },
+            onEditClick = { recipe ->
+                val intent = Intent(this, AddEditRecipeActivity::class.java)
+                intent.putExtra("RECIPE_ID", recipe.id)
+                startActivity(intent)
+            },
             onDeleteClick = { recipe -> deleteRecipe(recipe.id) }
         )
 
         recipeRecyclerView.layoutManager = LinearLayoutManager(this)
         recipeRecyclerView.adapter = recipeManageAdapter
 
+        // Add new recipe
         addRecipeFab.setOnClickListener {
-            Toast.makeText(this, "Add Recipe", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, AddEditRecipeActivity::class.java)
+            startActivity(intent)
         }
 
         loadRecipes()

@@ -21,6 +21,12 @@
         android:theme="@style/Theme.RecipeApp"
         tools:targetApi="31">
         <activity
+            android:name=".activities.CategoryRecipesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.AddEditUserActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.RecipeManagementActivity"
             android:exported="false" />
         <activity

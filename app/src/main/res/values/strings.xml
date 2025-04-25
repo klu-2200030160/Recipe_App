@@ -2,6 +2,7 @@
     <string name="hello">Hello</string>
     <string name="foodie">Foodie</string>
     <string name="admin">Admin</string>
+    <string name="chef">Chef</string>
     <string name="which_indian_food_would_you_like_to_cook">Which Indian food would you like to cook?</string>
     <string name="search_recipe">Search recipe</string>
     <string name="categories">Categories</string>
@@ -28,9 +29,9 @@
 
 
     <string-array name="roles_array">
-        <item>customer</item>
-        <item>chef</item>
-        <item>admin</item>
+        <item>Customer</item>
+        <item>Chef</item>
+        <item>Admin</item>
     </string-array>
     <string-array name="filter_options">
         <item>All</item>

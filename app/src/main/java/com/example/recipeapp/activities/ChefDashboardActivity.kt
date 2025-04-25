@@ -55,6 +55,8 @@ class ChefDashboardActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        CategoryRecipesActivity.setupCategoryClicks(this)
+
 
         // Drawer setup
         drawerLayout = findViewById(R.id.drawerLayout)

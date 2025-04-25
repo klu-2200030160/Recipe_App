@@ -1,69 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/titleEditText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Recipe Title"
-        android:inputType="text" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <EditText
-        android:id="@+id/descriptionEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description"
-        android:inputType="textMultiLine" />
+        <EditText
+            android:id="@+id/titleEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Recipe Title"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/ingredientsEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Ingredients (one per line)"
-        android:inputType="textMultiLine" />
+        <EditText
+            android:id="@+id/descriptionEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="textMultiLine" />
 
-    <EditText
-        android:id="@+id/instructionsEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Instructions"
-        android:inputType="textMultiLine" />
+        <EditText
+            android:id="@+id/ingredientsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ingredients (one per line)"
+            android:inputType="textMultiLine" />
 
-    <EditText
-        android:id="@+id/categoryEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Category"
-        android:inputType="text" />
+        <EditText
+            android:id="@+id/instructionsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Instructions"
+            android:inputType="textMultiLine" />
 
-    <EditText
-        android:id="@+id/prepTimeEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Prep Time (minutes)"
-        android:inputType="number" />
+        <EditText
+            android:id="@+id/prepTimeEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Prep Time (minutes)"
+            android:inputType="number" />
 
-    <ImageView
-        android:id="@+id/imagePreview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:contentDescription="Recipe Image Preview" />
+        <!-- Spinner instead of EditText for Category -->
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
 
-    <Button
-        android:id="@+id/selectImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Image" />
 
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Recipe" />
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:contentDescription="Recipe Image Preview" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/selectImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Image" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Save Recipe" />
+    </LinearLayout>
+</ScrollView>

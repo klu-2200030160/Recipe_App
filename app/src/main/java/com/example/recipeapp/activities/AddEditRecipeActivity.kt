@@ -3,20 +3,15 @@ package com.example.recipeapp.activities
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.recipeapp.R
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.services.FirebaseService
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class AddEditRecipeActivity : AppCompatActivity() {
 
@@ -25,7 +20,7 @@ class AddEditRecipeActivity : AppCompatActivity() {
     private lateinit var descriptionEditText: EditText
     private lateinit var ingredientsEditText: EditText
     private lateinit var instructionsEditText: EditText
-    private lateinit var categoryEditText: EditText
+    private lateinit var categorySpinner: Spinner
     private lateinit var prepTimeEditText: EditText
     private lateinit var imagePreview: ImageView
     private lateinit var selectImageButton: Button
@@ -33,6 +28,8 @@ class AddEditRecipeActivity : AppCompatActivity() {
 
     private var selectedImageUri: Uri? = null
     private var editingRecipe: Recipe? = null
+
+    private val categoryList = listOf("Select a Category","Salad", "Main", "Beverage", "Desserts", "Snacks")
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
@@ -51,43 +48,47 @@ class AddEditRecipeActivity : AppCompatActivity() {
 
         firebaseService = FirebaseService(this)
 
-        // Check if user is logged in
         val currentUser = firebaseService.auth.currentUser
         if (currentUser == null) {
-            Log.e("AddEditRecipeActivity", "No user logged in, UID: null")
             showToast("Please log in to continue")
             finish()
             return
         }
-        Log.d("AddEditRecipeActivity", "Logged in user UID: ${currentUser.uid}")
 
+        // Initialize views
         titleEditText = findViewById(R.id.titleEditText)
         descriptionEditText = findViewById(R.id.descriptionEditText)
         ingredientsEditText = findViewById(R.id.ingredientsEditText)
         instructionsEditText = findViewById(R.id.instructionsEditText)
-        categoryEditText = findViewById(R.id.categoryEditText)
+        categorySpinner = findViewById(R.id.categorySpinner)
         prepTimeEditText = findViewById(R.id.prepTimeEditText)
         imagePreview = findViewById(R.id.imagePreview)
         selectImageButton = findViewById(R.id.selectImageButton)
         saveButton = findViewById(R.id.saveButton)
 
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryList)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        categorySpinner.adapter = adapter
+
         selectImageButton.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        saveButton.setOnClickListener { saveRecipe() }
 
-        editingRecipe = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra("recipe", Recipe::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra("recipe")
+        saveButton.setOnClickListener {
+            saveRecipe()
         }
-        editingRecipe?.let { loadRecipeForEditing(it) }
 
-        // Debug user role on start
-        CoroutineScope(Dispatchers.Main).launch {
-            val user = withContext(Dispatchers.IO) { firebaseService.getCurrentUser() }
-            Log.d("AddEditRecipeActivity", "User on start: $user")
+        val recipeId = intent.getStringExtra("RECIPE_ID")
+        if (!recipeId.isNullOrBlank()) {
+            CoroutineScope(Dispatchers.Main).launch {
+                val recipe = withContext(Dispatchers.IO) { firebaseService.getRecipeById(recipeId) }
+                if (recipe != null) {
+                    editingRecipe = recipe
+                    loadRecipeForEditing(recipe)
+                } else {
+                    showToast("Failed to load recipe for editing")
+                }
+            }
         }
     }
 
@@ -96,8 +97,17 @@ class AddEditRecipeActivity : AppCompatActivity() {
         descriptionEditText.setText(recipe.description)
         ingredientsEditText.setText(recipe.ingredients.joinToString("\n"))
         instructionsEditText.setText(recipe.instructions)
-        categoryEditText.setText(recipe.category)
         prepTimeEditText.setText(recipe.prepTime.toString())
+
+        val index = categoryList.indexOfFirst { it.equals(recipe.category, ignoreCase = true) }
+        if (index >= 0) categorySpinner.setSelection(index)
+
+        if (recipe.imageUrl.isNotBlank()) {
+            Glide.with(this)
+                .load(recipe.imageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .into(imagePreview)
+        }
     }
 
     private fun saveRecipe() {
@@ -106,7 +116,7 @@ class AddEditRecipeActivity : AppCompatActivity() {
         val ingredients = ingredientsEditText.text.toString().trim()
             .split("\n").map { it.trim() }.filter { it.isNotBlank() }
         val instructions = instructionsEditText.text.toString().trim()
-        val category = categoryEditText.text.toString().trim()
+        val category = categorySpinner.selectedItem.toString()
         val prepTime = prepTimeEditText.text.toString().trim().toIntOrNull() ?: 0
 
         if (title.isEmpty() || ingredients.isEmpty() || instructions.isEmpty()) {
@@ -115,22 +125,16 @@ class AddEditRecipeActivity : AppCompatActivity() {
         }
 
         CoroutineScope(Dispatchers.Main).launch {
-            // Check user role
             val user = withContext(Dispatchers.IO) { firebaseService.getCurrentUser() }
-            Log.d("AddEditRecipeActivity", "User: $user")
-            if (user == null) {
-                Log.e("AddEditRecipeActivity", "No user logged in")
-                showToast("Please log in to continue")
-                finish()
-                return@launch
-            }
-            if (user.role !in listOf("Chef", "Admin")) {
-                Log.e("AddEditRecipeActivity", "User role '${user.role}' not authorized")
+
+            val normalizedRole = user?.role?.trim()?.lowercase()
+            Log.d("AddEditRecipeActivity", "User role: ${user?.role}")
+
+            if (user == null || normalizedRole !in listOf("chef", "admin")) {
                 showToast("Only chefs or admins can add or update recipes")
                 return@launch
             }
 
-            // Create recipe object
             val recipe = Recipe(
                 id = editingRecipe?.id ?: "",
                 title = title,
@@ -143,7 +147,6 @@ class AddEditRecipeActivity : AppCompatActivity() {
                 prepTime = prepTime
             )
 
-            // Save recipe
             val result = withContext(Dispatchers.IO) {
                 firebaseService.saveRecipe(recipe, selectedImageUri)
             }
@@ -152,9 +155,7 @@ class AddEditRecipeActivity : AppCompatActivity() {
                 showToast("Recipe ${if (editingRecipe != null) "updated" else "added"} successfully")
                 finish()
             } else {
-                val errorMsg = result.exceptionOrNull()?.message ?: "Unknown error"
-                Log.e("AddEditRecipeActivity", "Save failed: $errorMsg")
-                showToast("Failed to save recipe: $errorMsg")
+                showToast("Failed to save recipe: ${result.exceptionOrNull()?.message}")
             }
         }
     }

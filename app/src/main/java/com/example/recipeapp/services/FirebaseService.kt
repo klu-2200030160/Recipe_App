@@ -160,6 +160,33 @@ class FirebaseService(context: Context) {
         Log.e("FirebaseService", "Get recipes failed: ${e.message}", e)
         emptyList()
     }
+    // Get recipes by category
+    suspend fun getRecipesByCategory(category: String): List<Recipe> {
+        return try {
+            val snapshot = db.collection("recipes")
+                .whereEqualTo("category", category)
+                .get()
+                .await()
+            snapshot.documents.mapNotNull { it.toObject(Recipe::class.java)?.copy(id = it.id) }
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Error fetching recipes by category: ${e.message}")
+            emptyList()
+        }
+    }
+    // Increment recipe views
+    suspend fun incrementRecipeViews(recipeId: String) {
+        try {
+            val recipeRef = db.collection("recipes").document(recipeId)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(recipeRef)
+                val currentViews = snapshot.getLong("views") ?: 0
+                transaction.update(recipeRef, "views", currentViews + 1)
+            }.await()
+            Log.d("FirebaseService", "Views incremented for recipe: $recipeId")
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Failed to increment views: ${e.message}", e)
+        }
+    }
 
     // Get popular recipes (sorted by review count)
     suspend fun getPopularRecipes(): List<Recipe> = try {
@@ -290,7 +317,7 @@ class FirebaseService(context: Context) {
             throw Exception("Invalid review")
         }
         val reviewId = db.collection("reviews").document().id
-        val finalReview = review.copy(id = reviewId)
+        val finalReview = review.copy(id =reviewId)
         db.collection("reviews").document(reviewId).set(finalReview).await()
         Log.d("FirebaseService", "Review added: $reviewId")
         Result.success(reviewId)
@@ -301,7 +328,7 @@ class FirebaseService(context: Context) {
 
     // Update user role (for admin)
     suspend fun updateUserRole(userId: String, role: String): Result<Unit> = try {
-        val normalizedRole = role.lowercase()
+        val normalizedRole = role.replaceFirstChar { it.uppercase() } // "chef" -> "Chef"
         db.collection("users").document(userId).update("role", normalizedRole).await()
         Log.d("FirebaseService", "Updated role for $userId to $normalizedRole")
         Result.success(Unit)
@@ -309,6 +336,7 @@ class FirebaseService(context: Context) {
         Log.e("FirebaseService", "Failed to update role: ${e.message}", e)
         Result.failure(e)
     }
+
     // Get recipes by user ID
     suspend fun getRecipesByUser(userId: String): List<Recipe> = try {
         val snapshot = db.collection("recipes")
@@ -326,4 +354,22 @@ class FirebaseService(context: Context) {
         Log.e("FirebaseService", "Get all recipes failed: ${e.message}", e)
         emptyList()
     }
-}
+    suspend fun getRecipeById(id: String): Recipe? {
+        return try {
+            val snapshot = db.collection("recipes").document(id).get().await()
+            snapshot.toObject(Recipe::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Error getting recipe: ${e.message}", e)
+            null
+        }
+    }
+    suspend fun getUserById(id: String): User? {
+        return try {
+            val snapshot = db.collection("users").document(id).get().await()
+            snapshot.toObject(User::class.java)?.copy(id = snapshot.id)
+        } catch (e: Exception) {
+            Log.e("FirebaseService", "Error getting user: ${e.message}", e)
+            null
+        }
+    }
+ }
