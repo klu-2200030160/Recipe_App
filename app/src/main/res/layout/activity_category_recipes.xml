@@ -9,7 +9,9 @@
     tools:context=".activities.CategoryRecipesActivity">
 
     <!-- Category Heading -->
+
     <TextView
+
         android:id="@+id/tvCategoryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

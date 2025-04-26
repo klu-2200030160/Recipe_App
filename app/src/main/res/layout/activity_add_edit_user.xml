@@ -9,25 +9,27 @@
 
         <ImageView
             android:id="@+id/bgImage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:alpha="0.8"
             android:scaleType="centerCrop"
             android:src="@drawable/background_image" />
 
         <LinearLayout
-            android:id="@+id/formContainer"
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginTop="64dp"
+            android:layout_marginBottom="32dp"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:background="#FFFFFF"
-            android:elevation="4dp"
+            android:padding="24dp"
+            android:background="#FAFAFA"
+            android:elevation="8dp"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
-            >
-
+            android:layout_centerInParent="true">
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

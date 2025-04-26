@@ -1,45 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="8dp"
+    android:layout_marginTop="12dp"
     android:layout_marginBottom="8dp"
-    android:elevation="4dp"
-    android:padding="12dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
 
-    <RelativeLayout
+    app:cardBackgroundColor="@android:color/white"
+    app:cardUseCompatPadding="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/edittext_border"
+
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/recipeTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:text="Paneer Tikka"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/editRecipeBtn"
+            app:layout_constraintHorizontal_bias="0.0" />
 
         <TextView
             android:id="@+id/recipeCategory"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/recipeTitle"
-            android:text="Category: Main Dish" />
+            android:layout_marginTop="4dp"
+            android:text="Category: Main Dish"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/recipeTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/editRecipeBtn" />
 
         <ImageButton
             android:id="@+id/editRecipeBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:src="@android:drawable/ic_menu_edit"
-            android:background="?attr/selectableItemBackgroundBorderless" />
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Edit Recipe"
+            android:scaleType="centerInside"
+            android:src="@drawable/write"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/deleteRecipeBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editRecipeBtn"
-            android:layout_alignParentEnd="true"
-            android:src="@android:drawable/ic_menu_delete"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-    </RelativeLayout>
+            android:layout_width="33dp"
+            android:layout_height="33dp"
+            android:layout_marginTop="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete Recipe"
+            android:scaleType="centerInside"
+            android:src="@drawable/bin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editRecipeBtn" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

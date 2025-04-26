@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="190dp"
             android:scaleType="fitCenter"
+            android:background="@drawable/edittext_border"
             android:adjustViewBounds="true"
             android:foreground="?android:attr/selectableItemBackground"
             android:contentDescription="@string/recipe_image_description" />

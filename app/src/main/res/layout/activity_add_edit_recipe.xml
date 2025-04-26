@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FDFDFD">
+    android:background="#F0FFF0">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -31,6 +31,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Recipe Title"
+            android:textColorHint="#4CAF50"
             android:layout_marginTop="16dp"
             app:boxStrokeColor="@color/green"
             app:boxCornerRadiusTopStart="12dp"
@@ -59,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Description"
+            android:textColorHint="#4CAF50"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusBottomStart="12dp"
@@ -86,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Ingredients (one per line)"
+            android:textColorHint="#4CAF50"
             app:boxStrokeColor="@color/green"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -114,6 +117,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Instructions"
+            android:textColorHint="#4CAF50"
             app:boxStrokeColor="@color/green"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
@@ -142,6 +146,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:hint="Prep Time (minutes)"
+            android:textColorHint="#4CAF50"
             app:boxStrokeColor="@color/green"
             app:boxCornerRadiusTopStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"

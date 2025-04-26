@@ -90,7 +90,8 @@
             android:layout_height="55dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/searchview"
+            android:background="@drawable/edittext_border"
+
             android:ems="10"
             android:focusable="false"
             android:fontFamily="@font/poppinslight"
@@ -152,7 +153,8 @@
                 <ImageView
                     android:id="@+id/salad"
                     style="@style/my_style"
-                    android:background="@drawable/category_card_bc"
+                    android:background="@drawable/edittext_border"
+
                     android:contentDescription="@string/salad_category_description"
                     app:srcCompat="@drawable/category_salad" />
 
@@ -180,7 +182,8 @@
                     style="@style/my_style"
                     android:layout_marginStart="17dp"
                     android:layout_toEndOf="@+id/salad"
-                    android:background="@drawable/category_card_bc"
+                    android:background="@drawable/edittext_border"
+
                     android:contentDescription="@string/main_dish_category_description"
                     app:srcCompat="@drawable/category_main" />
 
@@ -207,7 +210,8 @@
                     style="@style/my_style"
                     android:layout_marginStart="17dp"
                     android:layout_toEndOf="@+id/MainDish"
-                    android:background="@drawable/category_card_bc"
+                    android:background="@drawable/edittext_border"
+
                     android:contentDescription="@string/drinks_category_description"
                     app:srcCompat="@drawable/catergory_drinks" />
 
@@ -234,7 +238,8 @@
                     style="@style/my_style"
                     android:layout_marginStart="17dp"
                     android:layout_toEndOf="@+id/Drinks"
-                    android:background="@drawable/category_card_bc"
+                    android:background="@drawable/edittext_border"
+
                     android:contentDescription="@string/desserts_category_description"
                     app:srcCompat="@drawable/category_dessert" />
 
@@ -261,7 +266,8 @@
                     style="@style/my_style"
                     android:layout_marginStart="17dp"
                     android:layout_toEndOf="@+id/Desserts"
-                    android:background="@drawable/category_card_bc"
+                    android:background="@drawable/edittext_border"
+
                     android:contentDescription="@string/snacks_category_description"
                     app:srcCompat="@drawable/snacks" />
 

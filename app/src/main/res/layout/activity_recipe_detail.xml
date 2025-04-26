@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     tools:context=".activities.RecipeDetailActivity"
-    android:background="@color/white">
+    android:background="#F0FFF0">
 
     <LinearLayout
         android:id="@+id/main"
@@ -58,32 +58,57 @@
             android:layout_height="wrap_content" />
 
         <!-- 📊 Average Rating -->
+        <!-- 📊 Enhanced Average Rating -->
         <TextView
             android:id="@+id/averageRatingTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0.0/5"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="4dp" />
+            android:textColor="#388E3C"
+
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="center_horizontal" />
+
 
         <!-- ✍️ Review Input -->
+        <TextView
+            android:id="@+id/writeReviewTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Write a Review"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp" />
         <EditText
             android:id="@+id/reviewEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Write a review" />
+            android:hint="Share your experience"
+            android:background="@drawable/edittext_border"
+            android:minHeight="100dp"
+            android:gravity="top"
+            android:padding="10dp"
+            android:layout_marginBottom="12dp" />
+
 
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:progressTint="@color/green" />
 
         <Button
             android:id="@+id/submitReviewButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="#4CAF50"
+            android:textColor="@android:color/white"
             android:text="Submit Review" />
 
         <!-- 📝 Review List -->

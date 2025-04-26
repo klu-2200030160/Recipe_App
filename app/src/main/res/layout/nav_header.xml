@@ -4,15 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:gravity="center"
     android:padding="16dp"
-    android:background="@color/green">
+    android:background="#7FB171">
 
     <!-- Profile Image -->
     <ImageView
         android:id="@+id/iv_nav_profile_image"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_gravity="center"
         android:contentDescription="Profile Image"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_profile" />
@@ -23,7 +23,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_gravity="center"
         android:fontFamily="@font/poppinslight"
         android:text="Name"
         android:textColor="@android:color/white"
@@ -36,7 +35,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:layout_gravity="center"
         android:fontFamily="@font/poppinslight"
         android:text="Email"
         android:textColor="@android:color/white"
@@ -47,11 +45,11 @@
         android:id="@+id/tv_welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_gravity="center"
+        android:layout_marginTop="12dp"
         android:fontFamily="@font/poppinslight"
         android:text="Welcome!"
         android:textColor="@android:color/white"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

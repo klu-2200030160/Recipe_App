@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:background="#F0FFF0"
     android:padding="16dp">
 
     <TextView
@@ -12,11 +13,12 @@
         android:layout_height="wrap_content"
         android:text="Favorite Recipes"
         android:textSize="24sp"
+
         android:textColor="@color/black"
         android:fontFamily="@font/poppins"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/green"/>
+        android:background="#AFC19D"/>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
