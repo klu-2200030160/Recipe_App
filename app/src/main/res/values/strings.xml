@@ -13,6 +13,7 @@
     <string name="beverage">Beverage</string>
     <string name="desserts">Desserts</string>
     <string name="snacks">Snacks</string>
+    <string name="AllRecipes">All Recipes</string>
     <string name="menu_icon_description">Menu icon</string>
     <string name="background_image_description">Decorative background image</string>
     <string name="search_icon_description">Search icon</string>

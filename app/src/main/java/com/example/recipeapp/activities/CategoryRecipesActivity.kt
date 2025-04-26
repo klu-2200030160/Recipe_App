@@ -1,4 +1,3 @@
-// CategoryRecipesActivity.kt
 package com.example.recipeapp.activities
 
 import android.content.Intent
@@ -7,12 +6,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipeapp.R
 import com.example.recipeapp.adapters.RecipeAdapter
 import com.example.recipeapp.models.Recipe
 import com.example.recipeapp.services.FirebaseService
+import com.example.recipeapp.utils.RecyclerViewItemDecoration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,7 +34,8 @@ class CategoryRecipesActivity : AppCompatActivity() {
 
         firebaseService = FirebaseService(this)
         recyclerView = findViewById(R.id.recyclerViewCategory)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = GridLayoutManager(this, 2) // Set 2-column grid
+        recyclerView.addItemDecoration(RecyclerViewItemDecoration(this, 16)) // Add 16dp margins
 
         adapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)

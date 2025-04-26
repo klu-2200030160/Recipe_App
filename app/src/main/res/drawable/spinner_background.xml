@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <shape xmlns:android="http://schemas.android.com/apk/res/android"
-        android:shape="rectangle">
-        <solid android:color="#F0FFF0" />
-        <corners android:radius="12dp"/>
-    </shape>
-
+    <!-- Pressed state -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#E8F5E9" /> <!-- Light green for pressed -->
+            <stroke android:width="2dp" android:color="#4CAF50" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <!-- Focused state -->
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#F1F8E9" /> <!-- Slightly different green for focus -->
+            <stroke android:width="2dp" android:color="#4CAF50" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
+    <!-- Default state -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <stroke android:width="2dp" android:color="#4CAF50" />
+            <corners android:radius="12dp" />
+        </shape>
+    </item>
 </selector>

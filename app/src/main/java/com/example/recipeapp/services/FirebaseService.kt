@@ -33,7 +33,7 @@ class FirebaseService(context: Context) {
 
     // Validate password (no special characters, min length 6)
     private fun isValidPassword(password: String): Boolean {
-        val pattern = Pattern.compile("^[a-zA-Z0-9]+$")
+        val pattern = Pattern.compile("^[a-zA-Z0-9!@#$%^&*]+$")
         return pattern.matcher(password).matches() && password.length >= 6
     }
 

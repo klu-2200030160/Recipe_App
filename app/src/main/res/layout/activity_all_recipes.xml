@@ -19,6 +19,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+
     <!-- RecyclerView for Recipes -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
