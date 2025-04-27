@@ -8,10 +8,13 @@ import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import com.example.recipeapp.R
 import com.example.recipeapp.services.FirebaseService
 import com.example.recipeapp.utils.ToastUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,6 +51,16 @@ class ProfileActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.toolbar))
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Profile"
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
+        for (i in 0 until toolbar.childCount) {
+            val view = toolbar.getChildAt(i)
+            if (view is TextView) {
+                val typeface = ResourcesCompat.getFont(this, R.font.poppins) // Change to your font
+                view.typeface = typeface
+                view.textSize = 20f // Optional: set text size
+                break
+            }
+        }
 
         // Load current user data
         loadUserData()
@@ -74,8 +87,14 @@ class ProfileActivity : AppCompatActivity() {
                     nameEditText.setText(it.name ?: "")
                     ageEditText.setText(it.age?.toString() ?: "")
                     mobileEditText.setText(it.mobile ?: "")
+
                     if (!it.profileImageUrl.isNullOrEmpty()) {
-                        profileImageView.setImageURI(Uri.parse(it.profileImageUrl))
+                        // Load image using Glide
+                        Glide.with(this@ProfileActivity)
+                            .load(it.profileImageUrl)
+                            .placeholder(R.drawable.ic_profile) // while loading show default
+                            .error(R.drawable.ic_profile) // in case of error show default
+                            .into(profileImageView)
                     }
                 }
             } catch (e: Exception) {
@@ -83,6 +102,7 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
     }
+
 
     private fun saveProfile() {
         val name = nameEditText.text.toString().trim()

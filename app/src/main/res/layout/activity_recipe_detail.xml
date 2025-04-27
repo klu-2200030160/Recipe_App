@@ -67,7 +67,7 @@
                     android:fontFamily="@font/poppins"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#000000" />
+                    android:textColor="@color/green" />
 
                 <!-- Category -->
                 <TextView
@@ -111,18 +111,21 @@
                             android:layout_height="wrap_content"
                             android:numStars="5"
                             android:stepSize="0.5"
-                            android:isIndicator="true" />
+                            android:isIndicator="true"
+                            android:progressTint="#4CAF50"
+                            android:secondaryProgressTint="#4CAF50"
+                            android:backgroundTint="#C8E6C9" />
 
                         <TextView
                             android:id="@+id/averageRatingTextView"
-                            android:layout_width="wrap_content"
+                            android:layout_width="84dp"
                             android:layout_height="wrap_content"
-                            android:text="4.5/5"
-                            android:textSize="14sp"
-                            android:textColor="#000000"
-                            android:fontFamily="@font/poppinslight"
+                            android:layout_gravity="center_horizontal"
                             android:layout_marginTop="4dp"
-                            android:layout_gravity="center_horizontal" />
+                            android:fontFamily="@font/poppinslight"
+                            android:text="4.5/5"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
                     </LinearLayout>
 
                     <View
@@ -147,6 +150,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/poppins"
                     android:text="Ingredients"
+                    android:textColor="@color/green"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp" />
@@ -167,6 +171,7 @@
                     android:text="Instructions"
                     android:textSize="18sp"
                     android:textStyle="bold"
+                    android:textColor="@color/green"
                     android:layout_marginTop="16dp"
                     android:fontFamily="@font/poppins"/>
 
@@ -209,6 +214,7 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:layout_marginTop="16dp"
+                    android:textColor="@color/green"
                     android:fontFamily="@font/poppins" />
 
                 <EditText
@@ -217,17 +223,23 @@
                     android:layout_height="wrap_content"
                     android:hint="Write your review..."
                     android:layout_marginTop="8dp"
+                    android:textColor="@color/black"
                     android:fontFamily="@font/poppinslight"
                     android:background="@drawable/edittext_border"
                     android:padding="12dp" />
 
+                <!-- Review Rating Bar -->
                 <RatingBar
                     android:id="@+id/reviewRatingBar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:numStars="5"
                     android:stepSize="0.5"
-                    android:layout_marginTop="8dp" />
+                    android:layout_marginTop="8dp"
+                    android:progressTint="#4CAF50"
+                    android:secondaryProgressTint="#4CAF50"
+                    android:backgroundTint="#C8E6C9" />
+
 
                 <Button
                     android:id="@+id/submitReviewButton"

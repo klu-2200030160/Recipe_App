@@ -174,7 +174,6 @@
             android:layout_marginTop="16dp"
             android:padding="10dp"
             android:background="@drawable/spinner_background"
-            android:popupBackground="#F5F5F5"
             app:layout_constraintTop_toBottomOf="@id/til_prep_time"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />

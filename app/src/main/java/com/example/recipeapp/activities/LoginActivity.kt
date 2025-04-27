@@ -2,11 +2,13 @@ package com.example.recipeapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.ToggleButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.recipeapp.R
@@ -17,7 +19,7 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
-
+    private lateinit var togglePasswordVisibility: ToggleButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerText = findViewById<TextView>(R.id.registerTextView)
         val forgotPasswordTextView = findViewById<TextView>(R.id.ForgotPassword)
+        togglePasswordVisibility = findViewById(R.id.togglePasswordVisibility)
 
 
         // Set login button click listener
@@ -38,6 +41,15 @@ class LoginActivity : AppCompatActivity() {
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
             loginUser(email, password)
+        }
+        togglePasswordVisibility.setOnCheckedChangeListener { _, isChecked ->
+            passwordEditText.inputType = if (isChecked) {
+                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            } else {
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            }
+            // Keep cursor at the end
+            passwordEditText.setSelection(passwordEditText.text.length)
         }
 
         // Set register text click listener

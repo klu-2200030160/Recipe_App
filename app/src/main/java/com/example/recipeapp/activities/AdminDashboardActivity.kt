@@ -103,6 +103,11 @@ class AdminDashboardActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                R.id.nav_favorites->{
+                    val intent = Intent(this, FavoritesActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
                 R.id.nav_UserManagement -> {
                     val intent = Intent(this, UserManagementActivity::class.java)
                     startActivity(intent)
@@ -159,6 +164,7 @@ class AdminDashboardActivity : AppCompatActivity() {
         menu.findItem(R.id.nav_all_recipes)?.isVisible = true
         menu.findItem(R.id.nav_add_recipe)?.isVisible = true
         menu.findItem(R.id.nav_UserManagement)?.isVisible = true
+        menu.findItem(R.id.nav_favorites)?.isVisible = true
         menu.findItem(R.id.nav_recipe_management)?.isVisible = true
         menu.findItem(R.id.nav_profile)?.isVisible = true
         menu.findItem(R.id.nav_logout)?.isVisible = true

@@ -14,23 +14,29 @@
 
         android:layout_height="200dp"
         android:layout_marginStart="120dp"
-        android:layout_marginTop="332dp"
+        android:layout_marginTop="256dp"
         android:layout_marginEnd="141dp"
         android:src="@drawable/logo_animation"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.64"
+        app:flow_horizontalAlign="center"
+        app:flow_verticalAlign="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recipeRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="81dp"
+        tools:layout_editor_absoluteY="-78dp" />
 
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Made in 🇮🇳"
+        android:text="Made By Team Swarna"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppins"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.475"

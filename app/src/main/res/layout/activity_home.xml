@@ -80,6 +80,7 @@
             android:text="@string/which_indian_food_would_you_like_to_cook"
             android:textSize="25sp"
             android:textStyle="bold"
+            android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="@+id/textView"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -327,6 +328,7 @@
         android:background="@android:color/white"
         app:itemIconTint="@color/green"
         app:menu="@menu/home_menu"
-        app:headerLayout="@layout/nav_header" />
+        app:headerLayout="@layout/nav_header"
+        app:itemTextColor="@color/black"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

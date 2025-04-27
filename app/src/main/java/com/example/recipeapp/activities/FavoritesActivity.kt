@@ -3,8 +3,10 @@ package com.example.recipeapp.activities
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipeapp.R
 import com.example.recipeapp.adapters.RecipeAdapter
@@ -25,6 +27,20 @@ class FavoritesActivity : AppCompatActivity() {
 
         firebaseService = FirebaseService(this)
         favoritesRecyclerView = findViewById(R.id.favoritesRecyclerView)
+
+        setSupportActionBar(findViewById(R.id.toolbar3))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Favourites"
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar3)
+        for (i in 0 until toolbar.childCount) {
+            val view = toolbar.getChildAt(i)
+            if (view is TextView) {
+                val typeface = ResourcesCompat.getFont(this, R.font.poppins) // Change to your font
+                view.typeface = typeface
+                view.textSize = 20f // Optional: set text size
+                break
+            }
+        }
 
         // Setup Adapter with click handling
         recipeAdapter = RecipeAdapter { recipe ->
@@ -65,5 +81,9 @@ class FavoritesActivity : AppCompatActivity() {
                 Toast.makeText(this@FavoritesActivity, "Error loading favorites", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

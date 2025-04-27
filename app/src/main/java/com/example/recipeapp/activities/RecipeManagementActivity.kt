@@ -2,8 +2,10 @@ package com.example.recipeapp.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipeapp.R
@@ -26,6 +28,20 @@ class RecipeManagementActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recipe_management)
+
+        setSupportActionBar(findViewById(R.id.toolbar2))
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = "Recipe Management"
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar2)
+        for (i in 0 until toolbar.childCount) {
+            val view = toolbar.getChildAt(i)
+            if (view is TextView) {
+                val typeface = ResourcesCompat.getFont(this, R.font.poppins) // Change to your font
+                view.typeface = typeface
+                view.textSize = 20f // Optional: set text size
+                break
+            }
+        }
 
         recipeRecyclerView = findViewById(R.id.recipeRecyclerView)
         addRecipeFab = findViewById(R.id.addRecipeFab)
@@ -83,5 +99,9 @@ class RecipeManagementActivity : AppCompatActivity() {
                 Toast.makeText(this@RecipeManagementActivity, "Failed to delete recipe", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }

@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.recipeapp.R
@@ -17,6 +17,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import android.widget.Toast
+import androidx.core.content.res.ResourcesCompat
 
 class CategoryRecipesActivity : AppCompatActivity() {
 
@@ -28,14 +30,29 @@ class CategoryRecipesActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_category_recipes)
-        val categoryTitle = findViewById<TextView>(R.id.tvCategoryTitle)
-        category = intent.getStringExtra("CATEGORY") ?: ""
-        categoryTitle.text = category
 
+        category = intent.getStringExtra("CATEGORY") ?: ""
+
+        // Set up Toolbar
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = category
+        for (i in 0 until toolbar.childCount) {
+            val view = toolbar.getChildAt(i)
+            if (view is TextView) {
+                val typeface = ResourcesCompat.getFont(this, R.font.poppins) // Change to your font
+                view.typeface = typeface
+                view.textSize = 20f // Optional: set text size
+                break
+            }
+        }
+
+        // Set up RecyclerView
         firebaseService = FirebaseService(this)
         recyclerView = findViewById(R.id.recyclerViewCategory)
-        recyclerView.layoutManager = GridLayoutManager(this, 2) // Set 2-column grid
-        recyclerView.addItemDecoration(RecyclerViewItemDecoration(this, 16)) // Add 16dp margins
+        recyclerView.layoutManager = GridLayoutManager(this, 2) // 2-column grid
+        recyclerView.addItemDecoration(RecyclerViewItemDecoration(this, 16)) // 16dp margin decoration
 
         adapter = RecipeAdapter { recipe ->
             val intent = Intent(this, RecipeDetailActivity::class.java)
@@ -80,5 +97,9 @@ class CategoryRecipesActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }

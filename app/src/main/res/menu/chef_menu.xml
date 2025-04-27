@@ -16,8 +16,12 @@
         android:icon="@drawable/ic_add_recipes"
         android:title="Add Recipe" />
     <item
+        android:id="@+id/nav_favorites"
+        android:title="Favorites"
+        android:icon="@drawable/ic_favourites" />
+    <item
         android:id="@+id/nav_recipe_management"
-        android:icon="@drawable/usermanagement"
+        android:icon="@drawable/recipe_management"
         android:title="Recipe Management" />
     <item
         android:id="@+id/nav_profile"

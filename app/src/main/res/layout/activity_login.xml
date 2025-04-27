@@ -33,18 +33,37 @@
             android:inputType="textEmailAddress"
             android:background="@drawable/edittext_border"
             android:padding="12dp"
+            android:textColor="@color/black"
             android:textColorHint="#4CAF50"/>
-
-        <EditText
-            android:id="@+id/passwordEditText"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:background="@drawable/edittext_border"
-            android:padding="12dp"
-            android:textColorHint="#4CAF50"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="16dp">
+
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:background="@drawable/edittext_border"
+                android:padding="12dp"
+                android:textColorHint="#4CAF50"
+                android:textColor="#000000" />
+
+            <androidx.appcompat.widget.AppCompatToggleButton
+                android:id="@+id/togglePasswordVisibility"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@android:drawable/ic_menu_view"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:textOff=""
+                android:textOn="" />
+        </RelativeLayout>
+
 
         <Button
             android:id="@+id/loginButton"

@@ -73,6 +73,10 @@ class RecipeDetailActivity : AppCompatActivity() {
         reviewAdapter = ReviewAdapter()
         reviewsRecyclerView.adapter = reviewAdapter
         reviewsRecyclerView.layoutManager = LinearLayoutManager(this)
+        val backButton = findViewById<ImageButton>(R.id.backButton)
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val recipe = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getParcelableExtra("recipe", Recipe::class.java)
@@ -218,5 +222,9 @@ class RecipeDetailActivity : AppCompatActivity() {
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 }
