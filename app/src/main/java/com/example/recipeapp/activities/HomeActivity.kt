@@ -93,10 +93,6 @@ class HomeActivity : AppCompatActivity() {
                     startActivity(Intent(this, FavoritesActivity::class.java))
                     true
                 }
-                R.id.nav_shopping_list -> {
-                    startActivity(Intent(this, ShoppingListActivity::class.java))
-                    true
-                }
                 R.id.nav_profile -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
                     true

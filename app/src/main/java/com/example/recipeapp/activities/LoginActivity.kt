@@ -18,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var firebaseService: FirebaseService
     private lateinit var progressBar: ProgressBar
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -29,6 +30,8 @@ class LoginActivity : AppCompatActivity() {
         val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerText = findViewById<TextView>(R.id.registerTextView)
+        val forgotPasswordTextView = findViewById<TextView>(R.id.ForgotPassword)
+
 
         // Set login button click listener
         loginButton.setOnClickListener {
@@ -41,6 +44,11 @@ class LoginActivity : AppCompatActivity() {
         registerText.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
+        forgotPasswordTextView.setOnClickListener {
+            val intent = Intent(this, ForgotPasswordActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun loginUser(email: String, password: String) {

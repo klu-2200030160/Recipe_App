@@ -1,122 +1,252 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    tools:context=".activities.RecipeDetailActivity"
-    android:background="#F0FFF0">
+    android:background="@android:color/white">
 
-    <LinearLayout
-        android:id="@+id/main"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- 🖼️ Recipe Image -->
-        <ImageView
-            android:id="@+id/recipeImageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="Recipe image"
-            android:src="@drawable/placeholder_image" />
-
-        <TextView
-            android:id="@+id/titleTextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/descriptionTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <!-- Top Image with Back and Favorite icons -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="300dp">
 
-        <TextView
-            android:id="@+id/ingredientsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/recipeImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/placeholder_image" />
 
-        <TextView
-            android:id="@+id/instructionsTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <ImageButton
+                    android:id="@+id/backButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/round_white_circle"
+                    android:src="@drawable/back_icon"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerInside" />
 
-        <TextView
-            android:id="@+id/categoryTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                <ImageButton
+                    android:id="@+id/favoriteButton"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="16dp"
+                    android:background="@drawable/round_white_circle"
+                    android:src="@drawable/ic_favorite_border"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:scaleType="centerInside" />
+            </RelativeLayout>
 
-        <TextView
-            android:id="@+id/prepTimeTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            <!-- Recipe Details Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <!-- 📊 Average Rating -->
-        <!-- 📊 Enhanced Average Rating -->
-        <TextView
-            android:id="@+id/averageRatingTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="0.0/5"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="#388E3C"
+                <!-- Title -->
+                <TextView
+                    android:id="@+id/recipeTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recipe Title"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000" />
 
-        android:paddingHorizontal="12dp"
-        android:paddingVertical="6dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        android:layout_gravity="center_horizontal" />
+                <!-- Category -->
+                <TextView
+                    android:id="@+id/recipeCategory"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Category: Salad"
+                    android:fontFamily="@font/poppinslight"
+                    android:textColor="#4CAF50"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"/>
 
+                <!-- Description -->
+                <TextView
+                    android:id="@+id/recipeDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Short description about recipe..."
+                    android:fontFamily="@font/poppinslight"
+                    android:textColor="#666666"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
 
-        <!-- ✍️ Review Input -->
-        <TextView
-            android:id="@+id/writeReviewTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Write a Review"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="8dp" />
-        <EditText
-            android:id="@+id/reviewEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Share your experience"
-            android:background="@drawable/edittext_border"
-            android:minHeight="100dp"
-            android:gravity="top"
-            android:padding="10dp"
-            android:layout_marginBottom="12dp" />
+                <!-- Rating, Average, Prep Time Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="12dp">
 
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center_horizontal">
 
-        <RatingBar
-            android:id="@+id/ratingBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progressTint="@color/green" />
+                        <RatingBar
+                            android:id="@+id/averageRatingBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:numStars="5"
+                            android:stepSize="0.5"
+                            android:isIndicator="true" />
 
-        <Button
-            android:id="@+id/submitReviewButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#4CAF50"
-            android:textColor="@android:color/white"
-            android:text="Submit Review" />
+                        <TextView
+                            android:id="@+id/averageRatingTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="4.5/5"
+                            android:textSize="14sp"
+                            android:textColor="#000000"
+                            android:fontFamily="@font/poppinslight"
+                            android:layout_marginTop="4dp"
+                            android:layout_gravity="center_horizontal" />
+                    </LinearLayout>
 
-        <!-- 📝 Review List -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/reviewsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="12dp" />
+                    <View
+                        android:layout_width="32dp"
+                        android:layout_height="0dp" />
 
-    </LinearLayout>
-</ScrollView>
+                    <TextView
+                        android:id="@+id/prepTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⏱ Prep: 50 mins"
+                        android:textColor="#888888"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/poppinslight"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+
+                <!-- Ingredients Title -->
+                <TextView
+                    android:id="@+id/ingredientsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins"
+                    android:text="Ingredients"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
+
+                <!-- Ingredients RecyclerView -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/ingredientsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginTop="8dp" />
+
+                <!-- Instructions Title -->
+                <TextView
+                    android:id="@+id/instructionsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Instructions"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins"/>
+
+                <!-- Instructions -->
+                <TextView
+                    android:id="@+id/recipeInstructions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Step-by-step cooking instructions here..."
+                    android:textColor="#666666"
+                    android:fontFamily="@font/poppinslight"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"/>
+
+                <!-- Created By -->
+                <TextView
+                    android:id="@+id/createdBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Recipe by: ChefName"
+                    android:textSize="14sp"
+                    android:textColor="#888888"
+                    android:fontFamily="@font/poppinslight"
+                    android:layout_marginTop="20dp"
+                    android:layout_gravity="end"/>
+
+                <!-- Divider Line -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:background="#DDDDDD" />
+
+                <!-- Review Section -->
+                <TextView
+                    android:id="@+id/reviewSectionTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add your review"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/poppins" />
+
+                <EditText
+                    android:id="@+id/reviewEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Write your review..."
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/poppinslight"
+                    android:background="@drawable/edittext_border"
+                    android:padding="12dp" />
+
+                <RatingBar
+                    android:id="@+id/reviewRatingBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:stepSize="0.5"
+                    android:layout_marginTop="8dp" />
+
+                <Button
+                    android:id="@+id/submitReviewButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Submit Review"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="#4CAF50"
+                    android:textColor="@android:color/white" />
+
+                <!-- User Reviews List -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/reviewsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:nestedScrollingEnabled="false" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -372,4 +372,50 @@ class FirebaseService(context: Context) {
             null
         }
     }
+    // Add recipe to user's favorites
+    suspend fun addFavorite(recipeId: String): Boolean {
+        return try {
+            val userId = auth.currentUser?.uid ?: return false
+            val userRef = db.collection("users").document(userId)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val favorites = snapshot.get("favorites") as? MutableList<String> ?: mutableListOf()
+                if (!favorites.contains(recipeId)) {
+                    favorites.add(recipeId)
+                    transaction.update(userRef, "favorites", favorites)
+                }
+            }.await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // Remove recipe from user's favorites
+    suspend fun removeFavorite(recipeId: String): Boolean {
+        return try {
+            val userId = auth.currentUser?.uid ?: return false
+            val userRef = db.collection("users").document(userId)
+            db.runTransaction { transaction ->
+                val snapshot = transaction.get(userRef)
+                val favorites = snapshot.get("favorites") as? MutableList<String> ?: mutableListOf()
+                favorites.remove(recipeId)
+                transaction.update(userRef, "favorites", favorites)
+            }.await()
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    // Get list of favorite recipe IDs
+    suspend fun getFavoriteRecipeIds(): List<String> {
+        return try {
+            val userId = auth.currentUser?.uid ?: return emptyList()
+            val snapshot = db.collection("users").document(userId).get().await()
+            snapshot.get("favorites") as? List<String> ?: emptyList()
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
  }

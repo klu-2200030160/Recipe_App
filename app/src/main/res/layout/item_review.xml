@@ -3,29 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-
-    android:background="@drawable/edittext_border"
-    android:elevation="4dp"
-    android:layout_margin="8dp">
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/reviewCommentTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Amazing experience!"
-
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginBottom="8dp"/>
+        android:text="User comment goes here..."
+        android:textSize="14sp"
+        android:textColor="#000000"
+        android:fontFamily="@font/poppins" />
 
     <RatingBar
         android:id="@+id/reviewRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:isIndicator="true"
         android:numStars="5"
         android:stepSize="0.5"
-        android:progressTint="@color/green" />
+        android:isIndicator="true"
+        android:layout_marginTop="4dp" />
 </LinearLayout>

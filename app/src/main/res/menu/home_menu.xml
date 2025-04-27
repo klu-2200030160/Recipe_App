@@ -17,13 +17,9 @@
         android:title="Favorites"
         android:icon="@drawable/ic_favourites" />
     <item
-        android:id="@+id/nav_shopping_list"
-        android:title="Shopping List"
-        android:icon="@drawable/ic_shopping_list" />
-    <item
         android:id="@+id/nav_profile"
         android:title="Profile"
-        android:icon="@drawable/ic_profile" />
+        android:icon="@drawable/profile_icon" />
     <item
         android:id="@+id/nav_logout"
         android:title="Logout"

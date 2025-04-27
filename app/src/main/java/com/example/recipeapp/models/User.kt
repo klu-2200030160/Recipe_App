@@ -15,5 +15,4 @@ data class User(
     @PropertyName("mobile") val mobile: String = "",
     @PropertyName("profileImageUrl") val profileImageUrl: String = "",
     @PropertyName("favorites") val favorites: List<String> = emptyList(),
-    @PropertyName("shoppingList") val shoppingList: List<String> = emptyList()
 ) : Parcelable
